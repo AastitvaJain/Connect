@@ -11,22 +11,22 @@ internal sealed class DbService : IDbService
 
     public DbService(DbConfig config)
     {
-        var connectionString = $"server={config.Server};" +
-                               $"port={config.Port};" +
-                               $"database={config.Database};" +
-                               $"user={config.User};" +
-                               $"password={config.Password};" +
-                               $"SslMode=Preferred;";
-        
+        var connectionString = $"Host={config.Server};" +
+                               $"Port={config.Port};" +
+                               $"Database={config.Database};" +
+                               $"Username={config.User};" +
+                               $"Password={config.Password};" +
+                               $"SslMode=Prefer;";
+
+
         var options = new DbContextOptionsBuilder<ConnectDbContext>();
         
-        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        options.UseNpgsql(connectionString);
 
         DbContext = new ConnectDbContext(
             options.Options
         );
         
-        // Todo: Remove this
-        //DbContext.Database.EnsureCreated();
+        DbContext.Database.EnsureCreated();
     }
 }

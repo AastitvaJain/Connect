@@ -11,7 +11,7 @@ internal sealed class UserService : IUserService
     {
         return new UserDto(
             user.Id,
-            user.UserId.Value,
+            user.EmailId,
             user.Group,
             user.State,
             user.Name);

@@ -5,7 +5,7 @@ public interface IController
     Task Handle(HttpContext context, Request? request);
 }
 
-internal sealed class Controller(IHandler handler) : IController
+internal sealed class Controller(IHandler handler, ITimer timer) : IController
 {
     public async Task Handle(HttpContext context, Request? request)
     {
@@ -14,6 +14,14 @@ internal sealed class Controller(IHandler handler) : IController
         if(command is not null)
         {
             IResult result = await handler.Handle(command, context.RequestAborted);
+
+            await (result switch
+            {
+                CreatedResult data => context.Ok(data),
+                EmailConflictResult => context.Status(Status409Conflict),
+                IdCreationErrorResult => context.Status(Status500InternalServerError),
+                _ => throw new NotImplementedException()
+            });
         }
         else
         {
@@ -41,6 +49,6 @@ internal sealed class Controller(IHandler handler) : IController
             return null;
         }
         
-        return new Command(emailId, password, name);
+        return new Command(emailId, password, name, timer.UtcNow);
     }
 }

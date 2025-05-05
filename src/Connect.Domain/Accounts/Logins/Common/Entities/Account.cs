@@ -1,9 +1,13 @@
-namespace Connect.Accounts.Logins.Emails.Create;
+namespace Connect.Accounts.Logins;
 
 public sealed record Account(
     long Id,
-    UserId UserId,
+    string EmailId,
     Group Group,
     State State,
     string Name,
-    Auth Auth) : IAuthUser;
+    Auth Auth
+    ) : IAuthUser
+{
+    
+}

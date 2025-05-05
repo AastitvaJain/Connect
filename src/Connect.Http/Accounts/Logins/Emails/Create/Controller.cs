@@ -5,7 +5,7 @@ public interface IController
     Task Handle(HttpContext context, Request? request);
 }
 
-internal sealed class Controller(IHandler handler) : IController
+internal sealed class Controller(IHandler handler, ITimer timer) : IController
 {
     public async Task Handle(HttpContext context, Request? request)
     {
@@ -15,7 +15,14 @@ internal sealed class Controller(IHandler handler) : IController
         {
             IResult result = await handler.Handle(command, context.RequestAborted);
             
-            // Todo: Handle result
+            await (result switch
+            {
+                CreatedResult data => context.Ok(data),
+                NotFoundResult => context.Status(Status404NotFound),
+                PasswordMismatchResult => context.Status(Status409Conflict),
+                LockedResult => context.Status(Status423Locked),
+                _ => throw new NotImplementedException()
+            });
              
         }
         else
@@ -31,10 +38,12 @@ internal sealed class Controller(IHandler handler) : IController
         
         if(!PlainPassword.TryParse(request.Password, out PlainPassword password))
             return null;
-        
-        if(!UserId.TryParse(request.UserId, out UserId? userId))
+
+        if (!EmailId.TryParse(request.EmailId, out EmailId emailId))
+        {
             return null;
-        
-        return new Command(userId!, password);
+        }
+
+        return new Command(emailId, password, timer.UtcNow);
     }
 }

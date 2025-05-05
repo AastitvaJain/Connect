@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Connect.Accounts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -19,6 +20,8 @@ internal static class Module
     {
         IServices services = builder.Services;
         IConfiguration config = builder.Configuration;
+        
+        services.AddSingleton<ITimer, Timer>();
 
         services.ConfigureCors();
         
@@ -38,6 +41,8 @@ internal static class Module
             options.Providers.Add<BrotliCompressionProvider>();
             options.Providers.Add<GzipCompressionProvider>();
         });
+        
+        services.ConfigureAccountModule();
     }
     
     public static void MapMiddlewares(this WebApplication app)
@@ -71,7 +76,7 @@ internal static class Module
 
     public static void MapEndpoints(this IEndpoints endpoints)
     {
-        
+        endpoints.MapAccountEndpoints();
     }
     
     private static void ConfigureCors(this IServices services)

@@ -1,6 +1,4 @@
 namespace Connect.Accounts.Auths.Create;
 
-public class Request
-{
-    
-}
+public sealed record Request(
+    string? RefreshToken);

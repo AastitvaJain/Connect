@@ -10,7 +10,6 @@ public interface IAuthService
     
     AuthDto CreateAuthDto(
         long id,
-        UserId userId,
         Group group,
         State state,
         Auth auth);
@@ -40,20 +39,18 @@ internal sealed class AuthService : IAuthService
     
     public AuthDto CreateAuthDto(IAuthUser user)
     {
-        return CreateAuthDto(user.Id, user.UserId, user.Group, user.State, user.Auth);
+        return CreateAuthDto(user.Id, user.Group, user.State, user.Auth);
     }
 
     public AuthDto CreateAuthDto(
         long id,
-        UserId userId,
         Group group,
         State state,
         Auth auth)
     {
         List<Claim> claims = new()
         {
-            new Claim(Jwt.Id, userId.Value, ClaimValueTypes.String),
-            new Claim(Jwt.UserId, userId.Value, ClaimValueTypes.String),
+            new Claim(Jwt.Id, id.ToString(), ClaimValueTypes.Integer64),
             new Claim(Jwt.Group, group.ToString("D"), ClaimValueTypes.Integer32),
             new Claim(Jwt.State, state.ToString("D"), ClaimValueTypes.Integer32),
         };
@@ -78,7 +75,6 @@ internal sealed class AuthService : IAuthService
     private static class Jwt
     {
         public const string Id = "i";
-        public const string UserId = "u";
         public const string Group = "g";
         public const string State = "s";
         public const string Admin = "a";

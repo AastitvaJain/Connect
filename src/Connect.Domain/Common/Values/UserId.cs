@@ -1,22 +1,112 @@
 namespace Connect;
 
-public sealed record UserId(
-    string Prefix,
-    int Postfix,
-    string Value)
+public readonly record  struct UserId : IComparable<UserId>, IComparable
 {
-    private const int PrefixLength = 3;
-    private const int PostfixLength = 3;
-
-    public static bool TryParse(string? value, out UserId? userId)
+    public readonly long Value;
+    
+    public UserId(long value)
     {
-        if (value is null || value.Length != PrefixLength + PostfixLength || !int.TryParse(value[PrefixLength..], out int postfix))
+        Value = value;
+    }
+    
+    public UserId(long value, bool validate)
+    {
+        if (validate && !IsValid(value))
         {
-            userId = null;
-            return false;
+            throw new ArgumentOutOfRangeException(nameof(value));
         }
 
-        userId = new UserId(value[..PrefixLength], postfix, value);
-        return true;
+        Value = value;
+    }
+
+    public static UserId Create()
+    {
+        return new UserId(Id.Create(), false);
+    }
+
+    public static bool TryParse(long value, out UserId userId)
+    {
+        if (IsValid(value))
+        {
+            userId = new UserId(value, false);
+
+            return true;
+        }
+
+        userId = default;
+
+        return false;
+    }
+
+    public static bool TryParse(long? value, out UserId userId)
+    {
+        if (value is not null)
+        {
+            return TryParse(value.Value, out userId);
+        }
+
+        userId = default;
+
+        return false;
+    }
+    
+    public static bool TryParse(ReadOnlySpan<char> data, out UserId userId)
+    {
+        if (long.TryParse(data, out long value))
+        {
+            return TryParse(value, out userId);
+        }
+
+        userId = default;
+
+        return false;
+    }
+
+    private static bool IsValid(long value)
+    {
+        return value is >= Id.Min and <= Id.Max;
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
+
+    public bool Equals(UserId other)
+    {
+        return Value == other.Value;
+    }
+
+    public override int GetHashCode()
+    {
+        return Value.GetHashCode();
+    }
+
+    public int CompareTo(UserId other)
+    {
+        return Value.CompareTo(other.Value);
+    }
+
+    public int CompareTo(object? obj)
+    {
+        if (ReferenceEquals(null, obj))
+        {
+            return 1;
+        }
+
+        return obj is UserId other
+            ? CompareTo(other)
+            : throw new ArgumentException(
+                $"Object must be of type {nameof(UserId)}");
+    }
+
+    public static implicit operator long(UserId userId)
+    {
+        return userId.Value;
+    }
+
+    public static implicit operator string(UserId userId)
+    {
+        return userId.Value.ToString();
     }
 }
