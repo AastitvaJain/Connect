@@ -28,6 +28,7 @@ internal static class Module
         }
         
         services.ConfigureAuth(config);
+        services.ConfigureSql(config);
         
         services.ConfigureJsonSerializer();
 
@@ -212,5 +213,19 @@ internal static class Module
 
             options.SerializerOptions.IncludeFields = true;
         });
+    }
+    
+    private static void ConfigureSql(this IServices services, IConfiguration config)
+    {
+        SqlSection? data = config.GetRequiredSection("Db").Get<SqlSection>();
+
+        if (data is null || !data.IsValid())
+        {
+            throw new InvalidDataException(nameof(data));
+        }
+        
+        DbConfig dbConfig = new (data.Server, data.Port, data.Database, data.User, data.Password);
+        
+        services.AddSingleton<IDbService>(new DbService(dbConfig));
     }
 }
