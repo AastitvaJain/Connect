@@ -1,14 +1,8 @@
 namespace Connect;
 
-public class SoldInventoryDao
+public class NewInventoryDao
 {
     public Guid Id { get; set; } = Guid.NewGuid();
-    
-    [MaxLength(255)]
-    public string? BookingId { get; set; }
-    
-    [Required]
-    public DateTime BookingDate { get; set; }
     
     [Required]
     [MaxLength(255)]
@@ -23,14 +17,6 @@ public class SoldInventoryDao
     public string UnitNo { get; set; } = string.Empty;
     
     [Required]
-    [MaxLength(255)]
-    public string UniqueKey { get; set; } = string.Empty;
-    
-    [Required]
-    [MaxLength(255)]
-    public string BuyerName { get; set; } = string.Empty;
-    
-    [Required]
     public float BuiltUpArea { get; set; }
     
     [Required]
@@ -39,6 +25,7 @@ public class SoldInventoryDao
     [Required]
     public float TotalConsideration { get; set; }
     
-    [Required]
-    public float NetReceived { get; set; }
+    public float? RevisedRate { get; set; }
+    
+    public float? RevisedTotalConsideration { get; set; }
 }

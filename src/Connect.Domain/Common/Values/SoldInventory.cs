@@ -12,4 +12,6 @@ public sealed record SoldInventory(
     float BuiltUpArea,
     float Rate,
     float TotalConsideration,
-    float NetReceived);
+    float NetReceived,
+    float AssuredPrice,
+    float? RevisedAssuredPrice);

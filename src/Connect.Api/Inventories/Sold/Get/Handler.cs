@@ -32,6 +32,7 @@ internal sealed class Handler(IStore store) : IHandler
             soldInventory.BuiltUpArea,
             soldInventory.Rate,
             soldInventory.TotalConsideration,
-            soldInventory.NetReceived);
+            soldInventory.NetReceived,
+            soldInventory.RevisedAssuredPrice ?? soldInventory.AssuredPrice);
     }
 }

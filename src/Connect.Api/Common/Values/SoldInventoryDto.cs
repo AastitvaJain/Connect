@@ -9,4 +9,5 @@ public sealed record SoldInventoryDto(
     float BuiltUpArea,
     float Rate,
     float TotalConsideration,
-    float NetReceived);
+    float NetReceived,
+    float AssuredPrice);
