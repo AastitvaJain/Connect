@@ -28,4 +28,8 @@
         <InternalsVisibleTo Include="Connect" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Inventory\" />
+    </ItemGroup>
+
 </Project>

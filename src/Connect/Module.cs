@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Connect.Accounts;
+using Connect.Configs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -43,6 +44,7 @@ internal static class Module
         });
         
         services.ConfigureAccountModule();
+        services.ConfigureConfigsModule();
     }
     
     public static void MapMiddlewares(this WebApplication app)
@@ -77,6 +79,7 @@ internal static class Module
     public static void MapEndpoints(this IEndpoints endpoints)
     {
         endpoints.MapAccountEndpoints();
+        endpoints.MapConfigsEndpoints();
     }
     
     private static void ConfigureCors(this IServices services)

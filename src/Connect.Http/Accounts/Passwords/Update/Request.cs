@@ -1,6 +1,5 @@
 namespace Connect.Accounts.Passwords.Update;
 
-public class Request
-{
-    
-}
+public sealed record Request(
+    string? OldPassword,
+    string? NewPassword);

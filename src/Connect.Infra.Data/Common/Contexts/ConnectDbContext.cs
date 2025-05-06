@@ -21,11 +21,14 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.Property(e => e.EmailId)
                 .IsRequired()
                 .HasMaxLength(256);
+            
+            entity.HasIndex(e => e.EmailId)
+                .IsUnique();
 
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(256);
-
+            
             // Store enums as strings
             entity.Property(e => e.Group)
                 .HasConversion<string>()

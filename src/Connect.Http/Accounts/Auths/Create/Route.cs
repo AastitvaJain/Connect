@@ -2,7 +2,7 @@ namespace Connect.Accounts.Auths.Create;
 
 public static class Route
 {
-    public static void MapCreateAuth(this IEndpoints endpoints)
+    public static void MapCreateAuths(this IEndpoints endpoints)
     {
         endpoints.MapPost("/auths", (
                     HttpContext context,
