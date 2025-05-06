@@ -1,5 +1,5 @@
 namespace Connect;
 
 public sealed record ChannelPartner(
-    int Id,
+    Guid Id,
     string Name);

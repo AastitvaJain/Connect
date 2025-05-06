@@ -62,7 +62,7 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
 
             entity.Property(e => e.Id)
                 .HasColumnName("id")
-                .ValueGeneratedOnAdd();
+                .HasDefaultValueSql("gen_random_uuid()"); // Postgres only
 
             entity.Property(e => e.Name)
                 .HasColumnName("name")

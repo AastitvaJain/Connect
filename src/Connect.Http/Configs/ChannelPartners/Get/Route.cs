@@ -10,7 +10,8 @@ public static class Route
                 controller.Handle(context))
             .WithName("GetChannelPartner")
             .Produces<ChannelPartnerDto>()
-            .WithTags("Internal")
+            .Produces(Status500InternalServerError)
+            .WithTags("Config")
             .RequireAuthorization("User");
     }
 }
