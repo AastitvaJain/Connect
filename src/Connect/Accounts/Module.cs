@@ -1,5 +1,6 @@
 using Connect.Accounts.Auths.Create;
 using Connect.Accounts.Logins.Emails.Create;
+using Connect.Accounts.Logouts.Create;
 using Connect.Accounts.Passwords.Update;
 using Connect.Accounts.Signups.Emails.Create;
 
@@ -13,6 +14,7 @@ public static class Module
         endpoints.MapCreateEmailLogins();
         endpoints.MapCreateAuths();
         endpoints.MapUpdatePasswords();
+        endpoints.MapCreateLogouts();
     }
 
     public static void ConfigureAccountModule(this IServices services)
@@ -25,5 +27,6 @@ public static class Module
         services.ConfigureCreateEmailLogins();
         services.ConfigureCreateAuths();
         services.ConfigureUpdatePasswords();
+        services.ConfigureCreateLogouts();
     }
 }

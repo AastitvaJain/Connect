@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Connect.Accounts;
 
 namespace Connect;
@@ -24,6 +23,5 @@ public class AccountDao : BaseEntity
     [Required]
     public required Password Password { get; set; }
     
-    [Required]
-    public required Auth Auth { get; set; }
+    public Auth? Auth { get; set; }
 }

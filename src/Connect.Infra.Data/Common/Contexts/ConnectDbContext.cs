@@ -7,9 +7,11 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
     public DbSet<AccountDao> Accounts { get; set; }
     public DbSet<ChannelPartnerDao> ChannelPartners { get; set; }
     
+    public DbSet<SoldInventoryDao> SoldInventory { get; set; }
+    
     public IQueryable<T> ReadOnlySet<T>() where T : class =>
         Set<T>().AsNoTracking();
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AccountDao>(entity =>
@@ -18,42 +20,47 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
 
             entity.HasKey(e => e.Id);
 
+            entity.Property(e => e.Id)
+                .HasColumnName("id");
+
             entity.Property(e => e.EmailId)
+                .HasColumnName("email_id")
                 .IsRequired()
                 .HasMaxLength(256);
-            
+
             entity.HasIndex(e => e.EmailId)
                 .IsUnique();
 
             entity.Property(e => e.Name)
+                .HasColumnName("name")
                 .IsRequired()
                 .HasMaxLength(256);
-            
-            // Store enums as strings
+
             entity.Property(e => e.Group)
+                .HasColumnName("group")
                 .HasConversion<string>()
                 .IsRequired();
 
             entity.Property(e => e.State)
+                .HasColumnName("state")
                 .HasConversion<string>()
                 .IsRequired();
-            
+
             entity.OwnsOne(e => e.Password, pw =>
             {
-                pw.Property(p => p.Salt).HasColumnName("PasswordSalt").IsRequired();
-                pw.Property(p => p.Hash).HasColumnName("PasswordHash").IsRequired();
-                pw.Property(p => p.IterationCount).HasColumnName("PasswordIterations").IsRequired();
-                pw.Property(p => p.UpdateTime).HasColumnName("PasswordUpdated").IsRequired();
+                pw.Property(p => p.Salt).HasColumnName("password_salt").IsRequired();
+                pw.Property(p => p.Hash).HasColumnName("password_hash").IsRequired();
+                pw.Property(p => p.IterationCount).HasColumnName("password_iterations").IsRequired();
+                pw.Property(p => p.UpdateTime).HasColumnName("password_updated").IsRequired();
             });
 
-            // Map Auth record as owned type
             entity.OwnsOne(e => e.Auth, auth =>
             {
-                auth.Property(a => a.Token).HasColumnName("AuthToken").IsRequired();
-                auth.Property(a => a.CreateTime).HasColumnName("AuthCreated").IsRequired();
+                auth.Property(a => a.Token).HasColumnName("auth_token").IsRequired();
+                auth.Property(a => a.CreateTime).HasColumnName("auth_created").IsRequired();
             });
         });
-        
+
         modelBuilder.Entity<ChannelPartnerDao>(entity =>
         {
             entity.ToTable("channel_partner");
@@ -62,24 +69,93 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
 
             entity.Property(e => e.Id)
                 .HasColumnName("id")
-                .HasDefaultValueSql("gen_random_uuid()"); // Postgres only
+                .HasDefaultValueSql("gen_random_uuid()");
 
             entity.Property(e => e.Name)
                 .HasColumnName("name")
                 .HasMaxLength(255)
                 .IsRequired();
         });
+
+        modelBuilder.Entity<SoldInventoryDao>(entity =>
+        {
+            entity.ToTable("sold_inventory");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDefaultValueSql("gen_random_uuid()");
+
+            entity.Property(e => e.BookingId)
+                .HasColumnName("booking_id")
+                .HasMaxLength(255);
+            
+            entity.Property(e => e.BookingDate)
+                .HasColumnName("booking_date")
+                .IsRequired();
+            
+            entity.Property(e => e.ProjectName)
+                .HasColumnName("project_name")
+                .HasMaxLength(255)
+                .IsRequired();
+            
+            entity.Property(e => e.ProjectType)
+                .HasColumnName("project_type")
+                .HasMaxLength(255)
+                .IsRequired();
+            
+            entity.Property(e => e.UnitNo)
+                .HasColumnName("unit_no")
+                .HasMaxLength(255)
+                .IsRequired();
+            
+            entity.Property(e => e.UniqueKey)
+                .HasColumnName("unique_key")
+                .HasMaxLength(255)
+                .IsRequired();
+            
+            entity.Property(e => e.BuyerName)
+                .HasColumnName("buyer_name")
+                .HasMaxLength(255)
+                .IsRequired();
+            
+            entity.Property(e => e.BuiltUpArea)
+                .HasColumnName("built_up_area")
+                .IsRequired();
+            
+            entity.Property(e => e.Rate)
+                .HasColumnName("rate")
+                .IsRequired();
+            
+            entity.Property(e => e.TotalConsideration)
+                .HasColumnName("total_consideration")
+                .IsRequired();
+            
+            entity.Property(e => e.NetReceived)
+                .HasColumnName("net_received")
+                .IsRequired();
+
+            entity.HasIndex(e => e.UniqueKey).IsUnique();
+        });
         
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            // Only apply to types that inherit from BaseEntity
-            if (!typeof(BaseEntity).IsAssignableFrom(entityType.ClrType)) 
+            if (!typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
                 continue;
-            
-            modelBuilder.Entity(entityType.ClrType).Property<DateTime>("CreatedAt").IsRequired();
-            modelBuilder.Entity(entityType.ClrType).Property<DateTime>("UpdatedAt").IsRequired();
+
+            modelBuilder.Entity(entityType.ClrType)
+                .Property(nameof(BaseEntity.CreatedAt))
+                .HasColumnName("created_at")
+                .IsRequired();
+
+            modelBuilder.Entity(entityType.ClrType)
+                .Property(nameof(BaseEntity.UpdatedAt))
+                .HasColumnName("updated_at")
+                .IsRequired();
         }
     }
+
     
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
