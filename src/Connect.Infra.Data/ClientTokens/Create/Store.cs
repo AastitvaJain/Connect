@@ -4,6 +4,16 @@ internal sealed class Store(IDbService dbService) : IStore
 {
     private readonly ConnectDbContext _context = dbService.DbContext;
 
+    public async Task<bool> CheckSellRecords(List<PropertyRecord> sellRecords, CancellationToken cancellationToken)
+    {
+        var recordIds = sellRecords.Select(x => x.Id).ToList();
+
+        var matchedCount = await _context.SoldInventory
+            .CountAsync(x => recordIds.Contains(x.Id), cancellationToken);
+
+        return matchedCount == recordIds.Count;
+    }
+
     public async Task<ClientToken?> AlreadyCreated(List<PropertyRecord> sellRecords, CancellationToken cancellationToken)
     {
         var recordIds = sellRecords.Select(r => r.Id).ToHashSet();

@@ -14,6 +14,11 @@ internal sealed class Handler(IStore store) : IHandler
 
         if (sellRecords is not null && sellRecords.Count > 0)
         {
+            if (!await store.CheckSellRecords(sellRecords, cancellationToken))
+            {
+                return new NotFoundResult();
+            }
+            
             ClientToken? token = await store.AlreadyCreated(sellRecords, cancellationToken);
 
             if (token is not null)

@@ -4,4 +4,4 @@ public sealed record Request(
     string Name,
     string? Email = null,
     string? PhoneNumber = null,
-    List<Guid>? SellRecords = null);
+    List<PropertyRecord>? SellRecords = null);

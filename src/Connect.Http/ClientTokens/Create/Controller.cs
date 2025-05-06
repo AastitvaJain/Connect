@@ -45,9 +45,7 @@ internal sealed class Controller(IHandler handler, ITimer timer) : IController
         }
         
         EmailId.TryParse(request.Email, out EmailId emailId);
-
-        List<PropertyRecord>? sellRecords = request.SellRecords?.Select(x => new PropertyRecord(x)).ToList();
         
-        return new Command(userId, name, timer.UtcNow, emailId, request.PhoneNumber, sellRecords);
+        return new Command(userId, name, timer.UtcNow, emailId, request.PhoneNumber, request.SellRecords);
     }
 }
