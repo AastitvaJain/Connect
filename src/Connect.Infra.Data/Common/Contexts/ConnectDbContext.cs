@@ -13,6 +13,12 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
     
     public DbSet<NewInventoryDao> NewInventory { get; set; }
     
+    public DbSet<ClientDao> Clients { get; set; }
+    
+    public DbSet<PropertyRecordDao> PropertyRecords { get; set; }
+    
+    public DbSet<ClientPaymentDao> ClientPayments { get; set; }
+    
     public IQueryable<T> ReadOnlySet<T>() where T : class =>
         Set<T>().AsNoTracking();
     
@@ -228,7 +234,148 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.Property(e => e.RevisedTotalConsideration)
                 .HasColumnName("revised_total_consideration");
         });
+        
+        modelBuilder.Entity<ClientDao>(entity =>
+        {
+            entity.ToTable("client");
 
+            entity.HasKey(e => new { e.Id, e.Sequence });
+
+            entity.Property(e => e.Id).HasColumnName("id");
+
+            entity.Property(e => e.Sequence)
+                .HasColumnName("sequence")
+                .UseIdentityAlwaysColumn() // PostgresSQL
+                .HasIdentityOptions(startValue:100000, maxValue:999999);
+            
+            entity.Property(e => e.Name)
+                .HasColumnName("name")
+                .HasMaxLength(255)
+                .IsRequired();
+
+            entity.Property(e => e.EmailId)
+                .HasColumnName("email_id")
+                .HasMaxLength(255);
+
+            entity.Property(e => e.PhoneNo)
+                .HasColumnName("phone_no")
+                .HasMaxLength(255);
+
+            // One-to-many SellRecords
+            entity.HasMany(e => e.SellRecords)
+                .WithOne(e => e.Seller)
+                .HasForeignKey(e => new { e.SellerId, e.SellerSequence })
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // One-to-many BuyRecords
+            entity.HasMany(e => e.BuyRecords)
+                .WithOne(e => e.Buyer)
+                .HasForeignKey(e => new { e.BuyerId, e.BuyerSequence })
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // One-to-one ClientPayment
+            entity.HasOne(e => e.ClientPayment)
+                .WithOne(e => e.Client)
+                .HasForeignKey<ClientPaymentDao>(e => new { e.ClientId, e.ClientSequence })
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(e => e.Account)
+                .WithMany()
+                .HasForeignKey(e => e.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+        
+        modelBuilder.Entity<PropertyRecordDao>(entity =>
+        {
+            entity.ToTable("property_record");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDefaultValueSql("gen_random_uuid()");
+
+            entity.Property(e => e.PropertyRecordId)
+                .HasColumnName("property_record_id")
+                .IsRequired();
+
+            entity.Property(e => e.Rate)
+                .HasColumnName("rate");
+
+            entity.Property(e => e.PaymentPlan)
+                .HasColumnName("payment_plan")
+                .HasMaxLength(100);
+
+            // Seller (one-to-many)
+            entity.HasOne(e => e.Seller)
+                .WithMany(c => c.SellRecords)
+                .HasForeignKey(e => new { e.SellerId, e.SellerSequence })
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Buyer (one-to-many)
+            entity.HasOne(e => e.Buyer)
+                .WithMany(c => c.BuyRecords)
+                .HasForeignKey(e => new { e.BuyerId, e.BuyerSequence })
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ClientPaymentDao>(entity =>
+        {
+            entity.ToTable("client_payment");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDefaultValueSql("gen_random_uuid()"); // PostgreSQL UUID generation
+
+            entity.Property(e => e.AmountPaid)
+                .HasColumnName("amount_paid")
+                .IsRequired();
+
+            entity.Property(e => e.PaymentMode)
+                .HasColumnName("payment_mode")
+                .IsRequired();
+
+            entity.Property(e => e.PaymentId)
+                .HasColumnName("payment_id")
+                .IsRequired();
+
+            entity.Property(e => e.ClientId)
+                .HasColumnName("client_id")
+                .IsRequired();
+
+            entity.Property(e => e.ClientSequence)
+                .HasColumnName("client_sequence")
+                .IsRequired();
+
+            entity.Property(e => e.ChannelPartnerId)
+                .HasColumnName("channel_partner_id");
+
+            entity.Property(e => e.CustomChannelPartnerName)
+                .HasColumnName("custom_channel_partner_name")
+                .HasMaxLength(255);
+
+            entity.Property(e => e.CustomChannelPartnerNumber)
+                .HasColumnName("custom_channel_partner_number")
+                .HasMaxLength(255);
+
+            entity.HasOne(p => p.Client)
+                .WithOne(c => c.ClientPayment)
+                .HasForeignKey<ClientPaymentDao>(p => new { p.ClientId, p.ClientSequence })
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Optional FK to ChannelPartnerDao
+            entity.HasOne(e => e.ChannelPartner)
+                .WithMany()
+                .HasForeignKey(e => e.ChannelPartnerId)
+                .OnDelete(DeleteBehavior.SetNull);
+            
+            entity.HasOne(e => e.Account)
+                .WithMany()
+                .HasForeignKey(e => e.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
         
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {

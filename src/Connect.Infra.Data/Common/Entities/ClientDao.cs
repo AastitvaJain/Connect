@@ -1,0 +1,27 @@
+namespace Connect;
+
+public class ClientDao : BaseEntity
+{
+    public int Id { get; set; }
+    
+    public int Sequence { get; set; }
+    
+    [Required]
+    [MaxLength(255)]
+    public required string Name { get; set; }
+    
+    [MaxLength(255)]
+    public string? EmailId { get; set; }
+    
+    [MaxLength(255)]
+    public string? PhoneNo { get; set; }
+    
+    public List<PropertyRecordDao>? SellRecords { get; set; }
+
+    public List<PropertyRecordDao>? BuyRecords { get; set; } = null;
+    
+    public ClientPaymentDao? ClientPayment { get; set; } = null;
+    
+    public long AccountId { get; set; } 
+    public AccountDao? Account { get; set; }
+}

@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Connect.Accounts;
+using Connect.ClientTokens;
 using Connect.Configs;
 using Connect.Inventories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -47,6 +48,7 @@ internal static class Module
         services.ConfigureAccountModule();
         services.ConfigureConfigsModule();
         services.ConfigureInventoriesModule();
+        services.ConfigureClientTokenModule();
     }
     
     public static void MapMiddlewares(this WebApplication app)
@@ -83,6 +85,7 @@ internal static class Module
         endpoints.MapAccountEndpoints();
         endpoints.MapConfigsEndpoints();
         endpoints.MapInventoriesEndpoints();
+        endpoints.MapClientTokenEndpoints();
     }
     
     private static void ConfigureCors(this IServices services)
