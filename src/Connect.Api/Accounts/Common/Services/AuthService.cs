@@ -18,7 +18,7 @@ public interface IAuthService
 internal sealed class AuthService : IAuthService
 {
     private const string TokenType = "Bearer";
-    private const int Duration = 3_600; // 1 hour
+    private const int Duration = 30_600; // 1 hour
 
     private readonly string _issuer;
     private readonly string _audience;
