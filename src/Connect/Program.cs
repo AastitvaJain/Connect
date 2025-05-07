@@ -10,5 +10,7 @@ app.MapMiddlewares();
 app.MapEndpoints();
 
 app.MapGet("/", () => "Connect API!");
+app.MapGet("/health", () => Results.Ok("Healthy"));
+
 
 await app.RunAsync();
