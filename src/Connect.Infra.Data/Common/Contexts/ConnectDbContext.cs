@@ -310,8 +310,18 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .HasColumnName("property_record_id")
                 .IsRequired();
 
-            entity.Property(e => e.Rate)
-                .HasColumnName("rate");
+            entity.Property(e => e.OriginalRate)
+                .HasColumnName("original_rate")
+                .IsRequired();
+
+            entity.Property(e => e.DraftRate)
+                .HasColumnName("draft_rate");
+            
+            entity.Property(e => e.RequestedRate)
+                .HasColumnName("requested_rate");
+
+            entity.Property(e => e.ApprovedRate)
+                .HasColumnName("approved_rate");
 
             entity.Property(e => e.PaymentPlan)
                 .HasColumnName("payment_plan")

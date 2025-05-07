@@ -40,7 +40,10 @@ internal sealed class Store(IDbService dbService) : IStore
             SellRecords = client.SellRecords?.Select(x => new PropertyRecordDao
             {
                 PropertyRecordId = x.Id,
-                Rate = x.Rate,
+                OriginalRate = x.OriginalRate,
+                DraftRate = x.DraftRate,
+                RequestedRate = x.RequestedRate,
+                ApprovedRate = x.ApprovedRate,
                 PaymentPlan = x.PaymentPlan
             }).ToList()
         };

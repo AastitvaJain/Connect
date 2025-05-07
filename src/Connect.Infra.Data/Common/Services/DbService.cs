@@ -28,6 +28,6 @@ internal sealed class DbService : IDbService
         );
         
         // todo : Remove this before production
-        DbContext.Database.EnsureCreated();
+        //DbContext.Database.EnsureCreated();
     }
 }
