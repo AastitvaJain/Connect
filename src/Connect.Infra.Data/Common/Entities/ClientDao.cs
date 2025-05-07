@@ -22,6 +22,11 @@ public class ClientDao : BaseEntity
     
     public ClientPaymentDao? ClientPayment { get; set; } = null;
     
-    public long AccountId { get; set; } 
-    public AccountDao? Account { get; set; }
+    public long? CreatedBy { get; set; } 
+    
+    public AccountDao? CreatedByAccount { get; set; }
+    
+    public long? UpdatedBy { get; set; } 
+    
+    public AccountDao? UpdatedByAccount { get; set; }
 }

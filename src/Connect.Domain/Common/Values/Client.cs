@@ -3,8 +3,19 @@ namespace Connect;
 public sealed record Client(
     ClientToken Token,
     Name Name,
-    EmailId? EmailId = null,
-    string? PhoneNo = null,
-    List<PropertyRecord>? SellRecords = null,
-    List<PropertyRecord>? BuyRecords = null,
-    ClientPayment? Payment = null);
+    EmailId? EmailId,
+    string? PhoneNo,
+    List<PropertyRecord>? SellRecords,
+    List<PropertyRecord>? BuyRecords,
+    ClientPayment? Payment)
+{
+    public static Client Create(
+        ClientToken token,
+        Name name,
+        EmailId? emailId,
+        string? phoneNo,
+        List<PropertyRecord>? sellRecords)
+    {
+        return new Client(token, name, emailId, phoneNo, sellRecords, null, null);
+    }
+}

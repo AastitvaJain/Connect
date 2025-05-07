@@ -35,7 +35,7 @@ internal sealed class Store(IDbService dbService) : IStore
             Name = client.Name,
             EmailId = client.EmailId,
             PhoneNo = client.PhoneNo,
-            AccountId = userId.Value, 
+            CreatedBy = userId.Value, 
             Sequence = client.Token.Sequence,
             SellRecords = client.SellRecords?.Select(x => new PropertyRecordDao
             {

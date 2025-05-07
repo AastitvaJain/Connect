@@ -46,6 +46,12 @@ internal sealed class Controller(IHandler handler, ITimer timer) : IController
         
         EmailId.TryParse(request.Email, out EmailId emailId);
         
-        return new Command(userId, name, timer.UtcNow, emailId, request.PhoneNumber, request.SellRecords);
+        return new Command(
+            userId, 
+            name, 
+            timer.UtcNow, 
+            string.IsNullOrWhiteSpace(emailId.Value) ? null : emailId, 
+            string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber, 
+            request.SellRecords is null || request.SellRecords.Count == 0 ? null : request.SellRecords);
     }
 }

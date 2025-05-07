@@ -1,10 +1,10 @@
 namespace Connect;
 
 public sealed record ClientPayment(
-    Guid Id,
+    //Guid Id,
     float AmountPaid,
     string PaymentMode,
     int PaymentId,
-    ChannelPartner? ChannelPartner,
-    string? CustomChannelPartnerName = null,
-    string? CustomChannelPartnerNumber = null);
+    Guid? ChannelPartnerId,
+    string? CustomChannelPartnerName,
+    string? CustomChannelPartnerNumber);

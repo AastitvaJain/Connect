@@ -12,7 +12,7 @@ public class ClientPaymentDao : BaseEntity
     
     public required int ClientId { get; set; }
     public required int ClientSequence { get; set; } 
-    public required ClientDao Client { get; set; }
+    public ClientDao? Client { get; set; }
     
     public Guid? ChannelPartnerId { get; set; }
     public ChannelPartnerDao? ChannelPartner { get; set; }
@@ -20,7 +20,4 @@ public class ClientPaymentDao : BaseEntity
     public string? CustomChannelPartnerName { get; set; }
     
     public string? CustomChannelPartnerNumber { get; set; }
-    
-    public long AccountId { get; set; }
-    public required AccountDao Account { get; set; }
 }

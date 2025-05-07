@@ -261,6 +261,12 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .HasColumnName("phone_no")
                 .HasMaxLength(255);
 
+            entity.Property(e => e.CreatedBy)
+                .HasColumnName("created_by");
+            
+            entity.Property(e => e.CreatedBy)
+                .HasColumnName("updated_by");
+
             // One-to-many SellRecords
             entity.HasMany(e => e.SellRecords)
                 .WithOne(e => e.Seller)
@@ -279,9 +285,14 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .HasForeignKey<ClientPaymentDao>(e => new { e.ClientId, e.ClientSequence })
                 .OnDelete(DeleteBehavior.Cascade);
             
-            entity.HasOne(e => e.Account)
+            entity.HasOne(e => e.CreatedByAccount)
                 .WithMany()
-                .HasForeignKey(e => e.AccountId)
+                .HasForeignKey(e => e.CreatedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.HasOne(e => e.UpdatedByAccount)
+                .WithMany()
+                .HasForeignKey(e => e.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
         });
         
@@ -305,6 +316,18 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.Property(e => e.PaymentPlan)
                 .HasColumnName("payment_plan")
                 .HasMaxLength(100);
+            
+            entity.Property(e => e.SellerId)
+                .HasColumnName("seller_id");
+            
+            entity.Property(e => e.SellerSequence)
+                .HasColumnName("seller_sequence");
+            
+            entity.Property(e => e.BuyerId)
+                .HasColumnName("buyer_id");
+            
+            entity.Property(e => e.BuyerSequence)
+                .HasColumnName("buyer_sequence");
 
             // Seller (one-to-many)
             entity.HasOne(e => e.Seller)
@@ -370,11 +393,6 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .WithMany()
                 .HasForeignKey(e => e.ChannelPartnerId)
                 .OnDelete(DeleteBehavior.SetNull);
-            
-            entity.HasOne(e => e.Account)
-                .WithMany()
-                .HasForeignKey(e => e.AccountId)
-                .OnDelete(DeleteBehavior.Restrict);
         });
         
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())

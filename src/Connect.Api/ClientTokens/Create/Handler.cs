@@ -24,8 +24,13 @@ internal sealed class Handler(IStore store) : IHandler
             if (token is not null)
                 return new AlreadyCreatedResult(token.GetToken());
         }
-        
-        Client client = new(ClientToken.Create(currentTime), name, email, phoneNumber, sellRecords);
+
+        Client client = Client.Create(
+            ClientToken.Create(currentTime), 
+            name, 
+            email, 
+            phoneNumber, 
+            sellRecords);
         
         ClientToken? clientToken = await store.TryAdd(client, userId, cancellationToken);
             
