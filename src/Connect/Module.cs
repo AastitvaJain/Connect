@@ -28,7 +28,7 @@ internal static class Module
 
         services.ConfigureCors();
         
-        if (builder.Environment.IsDevelopment())
+        if (builder.Environment.IsDevelopment() || builder.Environment.IsProduction())
         {
             services.ConfigureSwagger();
         }
@@ -55,7 +55,7 @@ internal static class Module
     {
         app.UseCors("AnyOrigin");
 
-        if (app.Environment.IsDevelopment())
+        if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         {
             app.UseSwagger(options =>
             {
