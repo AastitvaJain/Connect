@@ -21,8 +21,6 @@ internal static class Module
 {
     public static void ConfigureApp(this WebApplicationBuilder builder)
     {
-        builder.WebHost.UseKestrel(); // optional — default now
-
         IServices services = builder.Services;
         IConfiguration config = builder.Configuration;
         
