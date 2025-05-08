@@ -16,10 +16,6 @@ export const generateTokenForExistingCustomer = async (
     new Set(soldUnits.map(unit => unit.buyerName?.trim()).filter(Boolean))
   );
 
-  if (uniqueNames.length !== 1) {
-    throw new Error('Sold records must belong to the same buyer.');
-  }
-
   const name = uniqueNames.join(', ');
 
   const sellRecords = soldUnits.map(unit => ({
