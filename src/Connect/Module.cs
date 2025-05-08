@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
@@ -239,7 +240,19 @@ internal static class Module
         }
         
         DbConfig dbConfig = new (data.Server, data.Port, data.Database, data.User, data.Password);
-        
-        services.AddSingleton<IDbService>(new DbService(dbConfig));
+
+        services.AddSingleton(dbConfig);
+
+        services.AddDbContext<ConnectDbContext>(options =>
+        {
+            var connectionString = $"Host={dbConfig.Server};" +
+                                   $"Port={dbConfig.Port};" +
+                                   $"Database={dbConfig.Database};" +
+                                   $"Username={dbConfig.User};" +
+                                   $"Password={dbConfig.Password};" +
+                                   $"SslMode=Prefer;";
+
+            options.UseNpgsql(connectionString);
+        });
     }
 }

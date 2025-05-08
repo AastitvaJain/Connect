@@ -1,13 +1,12 @@
 namespace Connect.Inventories.New.Get;
 
-internal sealed class Store(IDbService dbService) : IStore
+internal sealed class Store(ConnectDbContext context) : IStore
 {
-    private readonly ConnectDbContext _context = dbService.DbContext;
     public async Task<IEnumerable<NewInventory>?> GetList(
         int pageNo, int pageSize, string? projectNameFilter, string? unitNoFilter,
         CancellationToken cancellationToken)
     {
-        var query = _context.NewInventory.AsQueryable();
+        var query = context.NewInventory.AsQueryable();
         
         if(!string.IsNullOrWhiteSpace(projectNameFilter))
             query = query.Where(x => x.ProjectName == projectNameFilter);

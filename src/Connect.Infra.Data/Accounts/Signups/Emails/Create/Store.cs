@@ -1,12 +1,10 @@
 namespace Connect.Accounts.Signups.Emails.Create;
 
-internal sealed class Store(IDbService dbService) : IStore
+internal sealed class Store(ConnectDbContext context) : IStore
 {
-    private readonly ConnectDbContext _context = dbService.DbContext;
-    
     public Task<int> Count(EmailId emailId, CancellationToken cancellationToken)
     {
-        return _context.Accounts.CountAsync(
+        return context.Accounts.CountAsync(
             x => x.EmailId == emailId, 
             cancellationToken);
     }
@@ -17,7 +15,7 @@ internal sealed class Store(IDbService dbService) : IStore
         {
             UserId userId = UserId.Create();
             
-            int count = await _context.Accounts.CountAsync(x => x.Id == userId, cancellationToken);
+            int count = await context.Accounts.CountAsync(x => x.Id == userId, cancellationToken);
             
             if (count == 0)
             {
@@ -43,8 +41,8 @@ internal sealed class Store(IDbService dbService) : IStore
 
         try
         {
-            await _context.Accounts.AddAsync(dao, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+            await context.Accounts.AddAsync(dao, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
             return true;
         }
         catch

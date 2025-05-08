@@ -1,14 +1,12 @@
 namespace Connect.ClientTokens.Create;
 
-internal sealed class Store(IDbService dbService) : IStore
+internal sealed class Store(ConnectDbContext context) : IStore
 {
-    private readonly ConnectDbContext _context = dbService.DbContext;
-
     public async Task<bool> CheckSellRecords(List<PropertyRecord> sellRecords, CancellationToken cancellationToken)
     {
         var recordIds = sellRecords.Select(x => x.Id).ToList();
 
-        var matchedCount = await _context.SoldInventory
+        var matchedCount = await context.SoldInventory
             .CountAsync(x => recordIds.Contains(x.Id), cancellationToken);
 
         return matchedCount == recordIds.Count;
@@ -18,7 +16,7 @@ internal sealed class Store(IDbService dbService) : IStore
     {
         var recordIds = sellRecords.Select(r => r.Id).ToHashSet();
         
-        return await _context.Clients
+        return await context.Clients
             .Where(client => client.SellRecords != null &&
                              client.SellRecords.Count == recordIds.Count &&
                              client.SellRecords.All(s => recordIds.Contains(s.PropertyRecordId)))
@@ -49,10 +47,10 @@ internal sealed class Store(IDbService dbService) : IStore
         };
 
         // 2. Add to context
-        _context.Clients.Add(dao);
+        context.Clients.Add(dao);
 
         // 3. Save to DB
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         // 4. Return the composite token
         return new ClientToken(dao.Id, dao.Sequence);

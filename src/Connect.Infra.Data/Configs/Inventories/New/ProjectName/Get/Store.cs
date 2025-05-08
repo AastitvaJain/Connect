@@ -1,12 +1,10 @@
 namespace Connect.Configs.Inventories.New.ProjectName.Get;
 
-internal sealed class Store(IDbService dbService) : IStore
+internal sealed class Store(ConnectDbContext context) : IStore
 {
-    private readonly ConnectDbContext _context = dbService.DbContext;
-    
     public async Task<IEnumerable<string>?> GetList()
     {
-        return await _context.NewInventory.
+        return await context.NewInventory.
             Select(x => x.ProjectName)
             .Distinct()
             .ToListAsync();

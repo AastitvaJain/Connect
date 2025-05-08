@@ -1,8 +1,8 @@
 namespace Connect.ClientTokens.Update;
 
-internal sealed class Store(IDbService dbService) : ClientTokenStore(dbService), IStore
+internal sealed class Store(ConnectDbContext context) : ClientTokenStore(context), IStore
 {
-    private readonly ConnectDbContext _context = dbService.DbContext;
+    private readonly ConnectDbContext _context = context;
 
     public async Task<bool> TryUpdate(Client client, UserId userId, CancellationToken cancellationToken)
     {

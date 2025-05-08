@@ -1,9 +1,7 @@
 namespace Connect.Inventories.Sold.Get;
 
-internal sealed class Store(IDbService dbService) : IStore
+internal sealed class Store(ConnectDbContext context) : IStore
 {
-    private readonly ConnectDbContext _context = dbService.DbContext;
-    
     public async Task<IEnumerable<SoldInventory>?> GetList(
         int pageNo, 
         int pageSize, 
@@ -12,7 +10,7 @@ internal sealed class Store(IDbService dbService) : IStore
         string? buyerNameFilter,
         CancellationToken cancellationToken)
     {
-        var query = _context.SoldInventory.AsQueryable();
+        var query = context.SoldInventory.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(projectNameFilter))
             query = query.Where(x => x.ProjectName.Contains(projectNameFilter));
