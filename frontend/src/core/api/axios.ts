@@ -17,8 +17,6 @@ const instance = axios.create({
 
 // 🧠 Add auth only if `config.auth = true`
 instance.interceptors.request.use(async (config) => {
-  console.log('AUTH FLAG:', (config as any).auth, 'TOKEN:', getAccessToken());
-  (config.headers as any)['X-Debug-Source'] = 'axios-interceptor';
   if ((config as any).auth) {
     if (isTokenExpiringSoon()) {
       const refreshToken = getRefreshToken();
@@ -34,11 +32,9 @@ instance.interceptors.request.use(async (config) => {
 
     const token = getAccessToken();
     if (token) {
-      // If headers is not a plain object, convert to one
-      if (!config.headers || typeof config.headers !== 'object') {
-        config.headers = {} as any;
+      if (config.headers && typeof config.headers.set === 'function') {
+        config.headers.set('Authorization', `Bearer ${token}`);
       }
-      (config.headers as any)['Authorization'] = `Bearer ${token}`;
     }
   }
 

@@ -10,20 +10,20 @@ export const createClientToken = (data: CreateClientTokenRequest) =>
     method: 'POST',
     url: '/client-token',
     data,
-    auth: true
-  } as any);
+    withAuth: true
+  });
 
 export const getClientToken = (token: number) =>
   request<ClientDto>({
     method: 'GET',
     url: `/client-token/${token}`,
-    auth: true
-  } as any);
+    withAuth: true
+  });
 
 export const updateClientToken = (token: number, data: UpdateClientTokenRequest) =>
   request<ClientDto>({
     method: 'PUT',
     url: `/client-token/${token}`,
     data,
-    auth: true
-  } as any);
+    withAuth: true
+  });

@@ -8,8 +8,8 @@ export const getNewInventory = (data: InventoryRequest) =>
     method: 'POST',
     url: '/get/new-inventory',
     data,
-    auth: true
-  } as any);
+    withAuth: true
+  });
 
 // POST /get/sold-inventory
 export const getSoldInventory = (data: InventoryRequest) =>

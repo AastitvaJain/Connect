@@ -1,29 +1,26 @@
 import { request } from './request';
 import type { ChannelPartnerDto, ProjectNameDto } from '../models/ConfigDto';
 
-// POST /configs/cp
-export const getChannelPartnersApi = (data = { page: 1, pageSize: 100 }) =>
+// GET /configs/cp
+export const getChannelPartnersApi = () =>
   request<ChannelPartnerDto[]>({
-    method: 'POST',
+    method: 'GET',
     url: '/configs/cp',
-    data,
-    auth: true
-  } as any);
+    withAuth: true
+  });
 
-// POST /configs/new-project-names
-export const getNewProjectNamesApi = (data = { page: 1, pageSize: 100 }) =>
+// GET /configs/new-project-names
+export const getNewProjectNamesApi = () =>
   request<ProjectNameDto[]>({
-    method: 'POST',
+    method: 'GET',
     url: '/configs/new-project-names',
-    data,
-    auth: true
-  } as any);
+    withAuth: true
+  });
 
-// POST /configs/sold-project-names
-export const getSoldProjectNamesApi = (data = { page: 1, pageSize: 100 }) =>
+// GET /configs/sold-project-names
+export const getSoldProjectNamesApi = () =>
   request<ProjectNameDto[]>({
-    method: 'POST',
+    method: 'GET',
     url: '/configs/sold-project-names',
-    data,
-    auth: true
-  } as any);
+    withAuth: true
+  });

@@ -9,28 +9,28 @@ export const createEmailLogin = (data: EmailLoginRequest) =>
       method: 'POST',
       url: '/email-logins',
       data,
-      auth: false 
-    } as any);
+      withAuth: false 
+    });
 
 export const createAuth = (data: AuthRequest) =>
     request<AuthDto>({
       method: 'POST',
       url: '/auths',
       data,
-      auth: false 
-    } as any);
+      withAuth: false 
+    });
 
 export const updatePassword = (data: UpdatePasswordRequest) =>
     request<AuthDto>({
       method: 'POST',
       url: '/update-passwords',
       data,
-      auth: true 
-    } as any);
+      withAuth: true 
+    });
 
-export const logout = () =>
+export const logoutUser = () =>
     request<AuthDto>({
       method: 'POST',
       url: '/logouts',
-      auth: true 
-    } as any);
+      withAuth: true 
+    });
