@@ -1,5 +1,5 @@
 import { createEmailLogin, logoutUser } from '../api/accountApi';
-import { setAuthTokens, clearAuthTokens } from '../utils/auth';
+import { setAuthTokens, clearAuthTokens, checkIfLoggedIn } from '../utils/auth';
 import {
   setChannelPartners,
   setNewProjectNames,
@@ -47,4 +47,8 @@ export const logout = async () => {
   clearChannelPartners();
   clearNewProjectNames();
   clearSoldProjectNames();
+};
+
+export const checkIfLoggedInUser = () => {
+  return checkIfLoggedIn();
 };

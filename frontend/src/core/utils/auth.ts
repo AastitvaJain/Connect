@@ -32,3 +32,20 @@ export const isTokenExpiringSoon = () => {
   const timeLeft = expiry - Date.now();
   return timeLeft < 10 * 60 * 1000; // less than 10 minutes left
 };
+
+export const checkIfLoggedIn = () => {
+  
+  const accessToken = getAccessToken();
+  const tokenExpiry = getTokenExpiry();
+  const refreshToken = getRefreshToken();
+
+  if (!accessToken || !tokenExpiry) {
+    return false;
+  }
+
+  if (isTokenExpiringSoon() && !refreshToken) {
+    return false;
+  }
+
+  return true;
+};

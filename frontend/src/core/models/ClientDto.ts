@@ -1,3 +1,4 @@
+import { SoldInventoryDto, NewInventoryDto } from "./InventoryDto";
 export interface PropertyRecord {
     id: string;
     rate: number;
@@ -22,6 +23,8 @@ export interface PropertyRecord {
     phoneNumber?: string;
     sellRecords?: PropertyRecord[];
     buyRecords?: PropertyRecord[];
+    soldInventories?: SoldInventoryDto[];
+    newInventories?: NewInventoryDto[];
     payment?: ClientPayment;
   }
   
