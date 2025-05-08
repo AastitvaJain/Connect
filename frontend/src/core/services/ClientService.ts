@@ -1,4 +1,4 @@
-import { createClientToken, updateClientToken } from '../api/clientApi';
+import { createClientToken, getClientToken, updateClientToken } from '../api/clientApi';
 import type { SoldInventoryDto } from '../models/InventoryDto';
 import type { CreateClientTokenRequest, UpdateClientTokenRequest } from '../models/requests/ClientRequest';
 import type { PropertyRecord, ClientPayment } from '../models/ClientDto';
@@ -48,6 +48,10 @@ export const generateTokenForNewCustomer = async (
   return response;
 };
 
+export const getClientFromToken = async (tokenId: number) => {
+  const response = await getClientToken(tokenId);
+  return response;
+};
 
 export const updateClientProfile = async (
   tokenId: number,
