@@ -14,4 +14,6 @@ export interface SoldInventoryDto extends BaseInventory {
   assuredPrice: number;
 }
 
-export interface NewInventoryDto extends BaseInventory {}
+export interface NewInventoryDto extends BaseInventory {
+  bookingAmount: number;
+}

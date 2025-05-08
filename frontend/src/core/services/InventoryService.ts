@@ -3,6 +3,7 @@ import {
     getSoldInventory
   } from '../api/inventoryApi';
   import type { NewInventoryDto, SoldInventoryDto } from '../models/InventoryDto';
+import { PagedResult } from '../models/PagedResult';
   
   const DEFAULT_PAGE = 1;
   const DEFAULT_PAGE_SIZE = 10;
@@ -12,7 +13,7 @@ import {
     pageSize?: number,
     projectNameFilter?: string,
     unitNoFilter?: string
-  ): Promise<NewInventoryDto[]> => {
+  ): Promise<PagedResult<NewInventoryDto>> => {
     return await getNewInventory({
       page: !page ? DEFAULT_PAGE : page,
       pageSize: !pageSize ? DEFAULT_PAGE_SIZE : pageSize,
@@ -27,7 +28,7 @@ import {
     projectNameFilter?: string,
     unitNoFilter?: string,
     buyerNameFilter?: string
-  ): Promise<SoldInventoryDto[]> => {
+  ): Promise<PagedResult<SoldInventoryDto>> => {
     return await getSoldInventory({
       page: !page ? DEFAULT_PAGE : page,
       pageSize: !pageSize ? DEFAULT_PAGE_SIZE : pageSize,
