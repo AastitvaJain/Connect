@@ -11,7 +11,7 @@ public readonly record struct EmailId : IComparable<EmailId>, IComparable
             throw new ArgumentOutOfRangeException(nameof(value));   
         }
         
-        Value = value;
+        Value = value.ToLower();
     }
 
     public static bool TryParse(string? value, out EmailId emailId)
@@ -22,7 +22,7 @@ public readonly record struct EmailId : IComparable<EmailId>, IComparable
             return false;
         }
         
-        emailId = new EmailId(value);
+        emailId = new EmailId(value.ToLower());
         return true;   
     }
 

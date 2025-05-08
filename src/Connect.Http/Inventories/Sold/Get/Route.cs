@@ -9,7 +9,7 @@ public static class Route
             Request? request,
             IController controller) => controller.Handle(context, request))
             .WithName("GetSoldInventory")
-            .Produces<IEnumerable<SoldInventoryDto>>()
+            .Produces<PagedResult<SoldInventoryDto>>()
             .Produces(Status404NotFound)
             .WithTags("Inventory")
             .RequireAuthorization("User");

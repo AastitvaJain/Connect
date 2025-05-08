@@ -5,7 +5,7 @@ internal sealed class Store(ConnectDbContext context) : IStore
     public Task<int> Count(EmailId emailId, CancellationToken cancellationToken)
     {
         return context.Accounts.CountAsync(
-            x => x.EmailId == emailId, 
+            x => x.EmailId.ToLower() == emailId.Value.ToLower(), 
             cancellationToken);
     }
 

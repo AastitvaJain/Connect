@@ -2,7 +2,7 @@ namespace Connect.Inventories.New.Get;
 
 public interface IStore
 {
-    Task<IEnumerable<NewInventory>?> GetList(
+    Task<PagedResult<NewInventory>?> GetList(
         int pageNo,
         int pageSize,
         string? projectNameFilter,

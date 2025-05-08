@@ -12,12 +12,18 @@ internal sealed class Handler(IStore store) : IHandler
         (int pageNo, int pageSize, string? projectNameFilter, 
             string? unitNoFilter) = command;
         
-        IEnumerable<NewInventory>? newInventories = 
+        PagedResult<NewInventory>? result = 
             await store.GetList(pageNo, pageSize, projectNameFilter, unitNoFilter, cancellationToken);
 
-        if (newInventories is null)
+        if (result is null)
             return new NotFoundResult();
         
-        return new GetResult(newInventories.Select(NewInventoryDto.ToDto));
+        return new GetResult(new PagedResult<NewInventoryDto>()
+        {
+            TotalCount = result.TotalCount,
+            PageNumber = result.PageNumber,
+            PageSize = result.PageSize,
+            Items = result.Items.Select(NewInventoryDto.ToDto)
+        });
     }
 }

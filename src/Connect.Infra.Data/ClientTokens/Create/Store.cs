@@ -6,7 +6,7 @@ internal sealed class Store(ConnectDbContext context) : IStore
     {
         var recordIds = sellRecords.Select(x => x.Id).ToList();
 
-        var matchedCount = await context.SoldInventory
+        var matchedCount = await context.ReadOnlySet<SoldInventoryDao>()
             .CountAsync(x => recordIds.Contains(x.Id), cancellationToken);
 
         return matchedCount == recordIds.Count;
@@ -16,7 +16,7 @@ internal sealed class Store(ConnectDbContext context) : IStore
     {
         var recordIds = sellRecords.Select(r => r.Id).ToHashSet();
         
-        return await context.Clients
+        return await context.ReadOnlySet<ClientDao>()
             .Where(client => client.SellRecords != null &&
                              client.SellRecords.Count == recordIds.Count &&
                              client.SellRecords.All(s => recordIds.Contains(s.PropertyRecordId)))

@@ -4,7 +4,7 @@ internal class ClientTokenStore(ConnectDbContext context)
 {
     public async Task<Client?> Get(ClientToken clientToken, CancellationToken cancellationToken)
     {
-        ClientDao? dao = await context.Clients
+        ClientDao? dao = await context.ReadOnlySet<ClientDao>()
             .Where(c => c.Id == clientToken.Id && c.Sequence == clientToken.Sequence)
             .Include(c => c.SellRecords)
             .Include(c => c.BuyRecords)
@@ -19,8 +19,8 @@ internal class ClientTokenStore(ConnectDbContext context)
             new Name(dao.Name, false),
             dao.EmailId is null ? null : new EmailId(dao.EmailId),
             dao.PhoneNo,
-            dao.SellRecords?.Select(x => new PropertyRecord(x.Id, x.OriginalRate, x.DraftRate, x.RequestedRate, x.ApprovedRate, x.PaymentPlan)).ToList(),
-            dao.BuyRecords?.Select(x => new PropertyRecord(x.Id, x.OriginalRate, x.DraftRate, x.RequestedRate, x.ApprovedRate, x.PaymentPlan)).ToList(),
+            dao.SellRecords?.Select(x => new PropertyRecord(x.PropertyRecordId, x.OriginalRate, x.DraftRate, x.RequestedRate, x.ApprovedRate, x.PaymentPlan)).ToList(),
+            dao.BuyRecords?.Select(x => new PropertyRecord(x.PropertyRecordId, x.OriginalRate, x.DraftRate, x.RequestedRate, x.ApprovedRate, x.PaymentPlan)).ToList(),
             dao.ClientPayment is not null ? new ClientPayment(
                 dao.ClientPayment.AmountPaid,
                 dao.ClientPayment.PaymentMode,
@@ -32,7 +32,7 @@ internal class ClientTokenStore(ConnectDbContext context)
     
     public async Task<List<SoldInventory>?> GetSoldInventories(ClientToken clientToken, CancellationToken cancellationToken)
     {
-        List<PropertyRecordDao> records = await context.PropertyRecords
+        List<PropertyRecordDao> records = await context.ReadOnlySet<PropertyRecordDao>()
             .Where(x => x.SellerId == clientToken.Id && x.SellerSequence == clientToken.Sequence)
             .ToListAsync(cancellationToken);
 
@@ -50,7 +50,7 @@ internal class ClientTokenStore(ConnectDbContext context)
 
     public async Task<List<NewInventory>?> GetNewInventories(ClientToken clientToken, CancellationToken cancellationToken)
     {
-        List<PropertyRecordDao> records = await context.PropertyRecords
+        List<PropertyRecordDao> records = await context.ReadOnlySet<PropertyRecordDao>()
             .Where(x => x.BuyerId == clientToken.Id && x.BuyerSequence == clientToken.Sequence)
             .ToListAsync(cancellationToken);
         
