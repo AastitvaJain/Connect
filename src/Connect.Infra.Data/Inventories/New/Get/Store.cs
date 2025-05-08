@@ -20,15 +20,8 @@ internal sealed class Store(IDbService dbService) : IStore
             .Skip((pageNo - 1) * pageSize)
             .Take(pageSize);
         
-        return await query.Select(x => new NewInventory(
-            x.Id,
-            x.ProjectName,
-            x.ProjectType,
-            x.UnitNo,
-            x.BuiltUpArea,
-            x.Rate,
-            x.TotalConsideration,
-            x.RevisedRate,
-            x.RevisedTotalConsideration)).ToListAsync(cancellationToken);
+        var results =  await query.ToListAsync(cancellationToken);
+        
+        return results.Select(NewInventoryDao.ToNewInventory).ToList();
     }
 }

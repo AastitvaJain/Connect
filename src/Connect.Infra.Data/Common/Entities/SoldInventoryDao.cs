@@ -41,4 +41,28 @@ public class SoldInventoryDao
     
     [Required]
     public float NetReceived { get; set; }
+
+    [Required]
+    public float AssuredPrice { get; set; }
+    
+    public float? RevisedAssuredPrice { get; set; }
+
+    public static SoldInventory ToSoldInventory(SoldInventoryDao dao)
+    {
+        return new SoldInventory(
+            dao.Id,
+            dao.BookingId,
+            dao.BookingDate,
+            dao.ProjectName,
+            dao.ProjectType,
+            dao.UnitNo,
+            dao.UniqueKey,
+            dao.BuyerName,
+            dao.BuiltUpArea,
+            dao.Rate,
+            dao.TotalConsideration,
+            dao.NetReceived,
+            dao.AssuredPrice,
+            dao.RevisedAssuredPrice);
+    }
 }

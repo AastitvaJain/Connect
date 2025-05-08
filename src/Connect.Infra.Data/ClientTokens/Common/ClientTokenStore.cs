@@ -31,4 +31,40 @@ internal class ClientTokenStore(IDbService dbService)
                 dao.ClientPayment.CustomChannelPartnerName,
                 dao.ClientPayment.CustomChannelPartnerNumber) : null);
     }
+    
+    public async Task<List<SoldInventory>?> GetSoldInventories(ClientToken clientToken, CancellationToken cancellationToken)
+    {
+        List<PropertyRecordDao> records = await _context.PropertyRecords
+            .Where(x => x.SellerId == clientToken.Id && x.SellerSequence == clientToken.Sequence)
+            .ToListAsync(cancellationToken);
+
+        if (records.Count == 0)
+        {
+            return null;
+        }
+        
+        List<SoldInventoryDao> daos = await _context.SoldInventory
+            .Where(x => records.Select(r => r.PropertyRecordId).Contains(x.Id))
+            .ToListAsync(cancellationToken);
+        
+        return daos.Select(SoldInventoryDao.ToSoldInventory).ToList();
+    }
+
+    public async Task<List<NewInventory>?> GetNewInventories(ClientToken clientToken, CancellationToken cancellationToken)
+    {
+        List<PropertyRecordDao> records = await _context.PropertyRecords
+            .Where(x => x.BuyerId == clientToken.Id && x.BuyerSequence == clientToken.Sequence)
+            .ToListAsync(cancellationToken);
+        
+        if (records.Count == 0)
+        {
+            return null;
+        }
+        
+        List<NewInventoryDao> daos = await _context.NewInventory
+            .Where(x => records.Select(r => r.PropertyRecordId).Contains(x.Id))
+            .ToListAsync(cancellationToken);
+        
+        return daos.Select(NewInventoryDao.ToNewInventory).ToList();
+    }
 }

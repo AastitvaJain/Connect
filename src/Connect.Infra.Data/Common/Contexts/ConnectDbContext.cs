@@ -9,8 +9,6 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
     
     public DbSet<SoldInventoryDao> SoldInventory { get; set; }
     
-    public DbSet<AssuredPriceDao> AssuredPrice { get; set; }
-    
     public DbSet<NewInventoryDao> NewInventory { get; set; }
     
     public DbSet<ClientDao> Clients { get; set; }
@@ -145,50 +143,15 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.Property(e => e.NetReceived)
                 .HasColumnName("net_received")
                 .IsRequired();
-
-            entity.HasIndex(e => e.UniqueKey).IsUnique();
-        });
-
-        modelBuilder.Entity<AssuredPriceDao>(entity =>
-        {
-            entity.ToTable("assured_price");
-
-            entity.HasKey(e => e.Id);
-
-            entity.Property(e => e.Id)
-                .HasColumnName("id")
-                .HasDefaultValueSql("gen_random_uuid()"); // PostgresSQL UUID generator
-
-            entity.Property(e => e.ProjectType)
-                .HasColumnName("project_type")
-                .HasMaxLength(255)
-                .IsRequired();
-
-            entity.Property(e => e.ProjectName)
-                .HasColumnName("project_name")
-                .HasMaxLength(255)
-                .IsRequired();
-
-            entity.Property(e => e.UnitNo)
-                .HasColumnName("unit_no")
-                .HasMaxLength(255)
-                .IsRequired();
-
-            entity.Property(e => e.UniqueKey)
-                .HasColumnName("unique_key")
-                .HasMaxLength(255)
-                .IsRequired();
-
-            entity.HasIndex(e => e.UniqueKey)
-                .IsUnique();
-
+            
             entity.Property(e => e.AssuredPrice)
                 .HasColumnName("assured_price")
-                .HasMaxLength(100)
                 .IsRequired();
 
             entity.Property(e => e.RevisedAssuredPrice)
                 .HasColumnName("revised_assured_price");
+
+            entity.HasIndex(e => e.UniqueKey).IsUnique();
         });
         
         modelBuilder.Entity<NewInventoryDao>(entity =>

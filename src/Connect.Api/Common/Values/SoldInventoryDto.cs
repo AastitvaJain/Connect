@@ -10,4 +10,20 @@ public sealed record SoldInventoryDto(
     float Rate,
     float TotalConsideration,
     float NetReceived,
-    float AssuredPrice);
+    float AssuredPrice)
+{
+    public static SoldInventoryDto ToDto(SoldInventory soldInventory)
+    {
+        return new SoldInventoryDto(
+            soldInventory.Id,
+            soldInventory.ProjectName,
+            soldInventory.ProjectType,
+            soldInventory.UnitNo,
+            soldInventory.BuyerName,
+            soldInventory.BuiltUpArea,
+            soldInventory.Rate,
+            soldInventory.TotalConsideration,
+            soldInventory.NetReceived,
+            soldInventory.RevisedAssuredPrice ?? soldInventory.AssuredPrice);
+    }
+}

@@ -16,6 +16,15 @@ public class Handler(IStore store) : IHandler
             return new NotFoundResult();
         }
         
-        return new GetResult(ClientDto.ToDto(client));
+        List<SoldInventory> soldInventories = await store.GetSoldInventories(token, cancellationToken) ?? new();
+        List<NewInventory> newInventories = await store.GetNewInventories(token, cancellationToken) ?? new();
+
+
+        return new GetResult(
+            ClientDto.ToDto(
+                client, 
+                soldInventories.Select(SoldInventoryDto.ToDto).ToList(),
+                newInventories.Select(NewInventoryDto.ToDto).ToList())
+            );
     }
 }

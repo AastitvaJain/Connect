@@ -18,20 +18,6 @@ internal sealed class Handler(IStore store) : IHandler
         if (newInventories is null)
             return new NotFoundResult();
         
-        return new GetResult(newInventories.Select(ToDto));
-    }
-
-    private NewInventoryDto ToDto(NewInventory newInventory)
-    {
-        return new NewInventoryDto(
-            newInventory.Id,
-            newInventory.ProjectName,
-            newInventory.ProjectType,
-            newInventory.UnitNo,
-            newInventory.BuiltUpArea,
-            (float)(newInventory.RevisedRate is null or 0 ? newInventory.Rate : newInventory.RevisedRate),
-            (float)(newInventory.RevisedTotalConsideration is null or 0
-                ? newInventory.TotalConsideration
-                : newInventory.RevisedTotalConsideration));
+        return new GetResult(newInventories.Select(NewInventoryDto.ToDto));
     }
 }

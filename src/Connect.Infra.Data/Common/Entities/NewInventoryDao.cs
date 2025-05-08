@@ -28,4 +28,18 @@ public class NewInventoryDao
     public float? RevisedRate { get; set; }
     
     public float? RevisedTotalConsideration { get; set; }
+
+    public static NewInventory ToNewInventory(NewInventoryDao dao)
+    {
+        return new(
+            dao.Id,
+            dao.ProjectName,
+            dao.ProjectType,
+            dao.UnitNo,
+            dao.BuiltUpArea,
+            dao.Rate,
+            dao.TotalConsideration,
+            dao.RevisedRate,
+            dao.RevisedTotalConsideration);
+    }
 }

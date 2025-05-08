@@ -29,8 +29,15 @@ internal sealed class Handler(IStore store) : IHandler
             buyRecords ?? client.BuyRecords,
             payment ?? client.Payment);
 
-        return await store.TryUpdate(updatedClient, userId, cancellationToken)
-            ? new UpdatedResult(ClientDto.ToDto(updatedClient))
-            : new CouldNotUpdateResult();
+        if (!await store.TryUpdate(updatedClient, userId, cancellationToken)) 
+            return new CouldNotUpdateResult();
+        
+        List<SoldInventory> soldInventories = await store.GetSoldInventories(token, cancellationToken) ?? [];
+        List<NewInventory> newInventories = await store.GetNewInventories(token, cancellationToken) ?? [];
+
+        return new UpdatedResult(ClientDto.ToDto(updatedClient,
+            soldInventories.Select(SoldInventoryDto.ToDto).ToList(),
+            newInventories.Select(NewInventoryDto.ToDto).ToList()));
+
     }
 }

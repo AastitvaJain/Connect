@@ -7,9 +7,11 @@ public sealed record ClientDto(
     string? PhoneNumber,
     List<PropertyRecord>? SellRecords,
     List<PropertyRecord>? BuyRecords,
+    List<SoldInventoryDto>? SoldInventories,
+    List<NewInventoryDto>? NewInventories,
     ClientPayment? Payment)
 {
-    public static ClientDto ToDto(Client client)
+    public static ClientDto ToDto(Client client, List<SoldInventoryDto> soldInventories, List<NewInventoryDto> newInventories)
     {
         return new ClientDto(
             client.Token.GetToken(),
@@ -18,6 +20,8 @@ public sealed record ClientDto(
             client.PhoneNo,
             client.SellRecords,
             client.BuyRecords,
+            soldInventories,
+            newInventories,
             client.Payment);
     }
 }
