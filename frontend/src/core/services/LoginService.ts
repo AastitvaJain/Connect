@@ -19,7 +19,7 @@ export const login = async (emailId: string, password: string) => {
   const user = await createEmailLogin({ emailId, password });
 
   // Store tokens
-  const { accessToken, refreshToken, expiresInSeconds } = user.auth;
+  const { accessToken, refreshToken, expiresInSeconds } = user.authUser.auth;
   if (!accessToken || !refreshToken) {
     throw new Error('Login failed: missing tokens');
   }
@@ -37,7 +37,7 @@ export const login = async (emailId: string, password: string) => {
   setNewProjectNames(newNames.map(p => p.projectName || ''));
   setSoldProjectNames(soldNames.map(p => p.projectName || ''));
 
-  return user;
+  return user.authUser.user;
 };
 
 export const logout = async () => {

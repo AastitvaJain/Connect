@@ -5,7 +5,7 @@ import type { UpdatePasswordRequest } from '../models/requests/UpdatePasswordReq
 import { request } from './request';
 
 export const createEmailLogin = (data: EmailLoginRequest) =>
-    request<AuthUserDto>({
+    request<{authUser: AuthUserDto}>({
       method: 'POST',
       url: '/email-logins',
       data,

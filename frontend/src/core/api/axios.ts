@@ -17,7 +17,7 @@ const instance = axios.create({
 
 // 🧠 Add auth only if `config.auth = true`
 instance.interceptors.request.use(async (config) => {
-  if ((config as any).auth) {
+  if ((config as any).withAuth) {
     if (isTokenExpiringSoon()) {
       const refreshToken = getRefreshToken();
       if (refreshToken) {

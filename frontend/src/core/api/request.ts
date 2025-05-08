@@ -12,7 +12,6 @@ export const request = async <T = any>(
     const response = await axiosInstance.request<T>({
       ...config,
       // Pass through `auth` flag to interceptor
-      auth: config.auth
     });
 
     if (response.status >= 200 && response.status < 300) {
