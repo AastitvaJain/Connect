@@ -25,6 +25,8 @@ public class NewInventoryDao
     [Required]
     public float TotalConsideration { get; set; }
     
+    public float? BookingAmount { get; set; }
+    
     public float? RevisedRate { get; set; }
     
     public float? RevisedTotalConsideration { get; set; }

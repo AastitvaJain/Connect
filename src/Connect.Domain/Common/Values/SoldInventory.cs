@@ -3,11 +3,11 @@ namespace Connect;
 public sealed record SoldInventory(
     Guid Id,
     string? BookingId,
-    DateTime BookingDate,
+    DateTime? BookingDate,
     string ProjectName,
     string ProjectType,
     string UnitNo,
-    string UniqueKey,
+    string? UnitCategory,
     string BuyerName,
     float BuiltUpArea,
     float Rate,

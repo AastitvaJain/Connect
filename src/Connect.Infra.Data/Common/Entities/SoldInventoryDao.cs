@@ -5,10 +5,13 @@ public class SoldInventoryDao
     public Guid Id { get; set; } = Guid.NewGuid();
     
     [MaxLength(255)]
+    public string? SrNo { get; set; }
+    
+    [MaxLength(255)]
     public string? BookingId { get; set; }
     
-    [Required]
-    public DateTime BookingDate { get; set; }
+    [MaxLength(255)]
+    public string? BookingDate { get; set; }
     
     [Required]
     [MaxLength(255)]
@@ -22,9 +25,8 @@ public class SoldInventoryDao
     [MaxLength(255)]
     public string UnitNo { get; set; } = string.Empty;
     
-    [Required]
     [MaxLength(255)]
-    public string UniqueKey { get; set; } = string.Empty;
+    public string? UnitCategory { get; set; }
     
     [Required]
     [MaxLength(255)]
@@ -42,8 +44,8 @@ public class SoldInventoryDao
     [Required]
     public float NetReceived { get; set; }
 
-    [Required]
-    public float AssuredPrice { get; set; }
+    [MaxLength(255)]
+    public string? AssuredPrice { get; set; }
     
     public float? RevisedAssuredPrice { get; set; }
 
@@ -52,17 +54,17 @@ public class SoldInventoryDao
         return new SoldInventory(
             dao.Id,
             dao.BookingId,
-            dao.BookingDate,
+            DateTime.TryParse(dao.BookingDate, out var time) ? time : null,
             dao.ProjectName,
             dao.ProjectType,
             dao.UnitNo,
-            dao.UniqueKey,
+            dao.UnitCategory,
             dao.BuyerName,
             dao.BuiltUpArea,
             dao.Rate,
             dao.TotalConsideration,
             dao.NetReceived,
-            dao.AssuredPrice,
+            float.TryParse(dao.AssuredPrice, out var price) ? price : 0,
             dao.RevisedAssuredPrice);
     }
 }

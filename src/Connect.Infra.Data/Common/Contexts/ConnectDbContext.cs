@@ -94,6 +94,10 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.Property(e => e.Id)
                 .HasColumnName("id")
                 .HasDefaultValueSql("gen_random_uuid()");
+            
+            entity.Property(e => e.SrNo)
+                .HasColumnName("sr_no")
+                .HasMaxLength(255);
 
             entity.Property(e => e.BookingId)
                 .HasColumnName("booking_id")
@@ -101,7 +105,7 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             
             entity.Property(e => e.BookingDate)
                 .HasColumnName("booking_date")
-                .IsRequired();
+                .HasMaxLength(255);
             
             entity.Property(e => e.ProjectName)
                 .HasColumnName("project_name")
@@ -117,11 +121,10 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .HasColumnName("unit_no")
                 .HasMaxLength(255)
                 .IsRequired();
-            
-            entity.Property(e => e.UniqueKey)
-                .HasColumnName("unique_key")
-                .HasMaxLength(255)
-                .IsRequired();
+
+            entity.Property(e => e.UnitCategory)
+                .HasColumnName("unit_category")
+                .HasMaxLength(255);
             
             entity.Property(e => e.BuyerName)
                 .HasColumnName("buyer_name")
@@ -146,12 +149,10 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             
             entity.Property(e => e.AssuredPrice)
                 .HasColumnName("assured_price")
-                .IsRequired();
+                .HasMaxLength(255);
 
             entity.Property(e => e.RevisedAssuredPrice)
                 .HasColumnName("revised_assured_price");
-
-            entity.HasIndex(e => e.UniqueKey).IsUnique();
         });
         
         modelBuilder.Entity<NewInventoryDao>(entity =>
@@ -190,6 +191,9 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.Property(e => e.TotalConsideration)
                 .HasColumnName("total_consideration")
                 .IsRequired();
+
+            entity.Property(e => e.BookingAmount)
+                .HasColumnName("booking_amount");
 
             entity.Property(e => e.RevisedRate)
                 .HasColumnName("revised_rate");
