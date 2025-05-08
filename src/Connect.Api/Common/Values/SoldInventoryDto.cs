@@ -11,7 +11,8 @@ public sealed record SoldInventoryDto(
     float Rate,
     float TotalConsideration,
     float NetReceived,
-    float AssuredPrice)
+    float AssuredPrice,
+    float? RevisedAssuredPrice)
 {
     public static SoldInventoryDto ToDto(SoldInventory soldInventory)
     {
@@ -26,6 +27,7 @@ public sealed record SoldInventoryDto(
             soldInventory.Rate,
             soldInventory.TotalConsideration,
             soldInventory.NetReceived,
-            soldInventory.RevisedAssuredPrice ?? soldInventory.AssuredPrice);
+            soldInventory.AssuredPrice,
+            soldInventory.RevisedAssuredPrice);
     }
 }

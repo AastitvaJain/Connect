@@ -8,5 +8,6 @@ public sealed record NewInventory(
     float BuiltUpArea,
     float Rate,
     float TotalConsideration,
+    float? BookingAmount,
     float? RevisedRate,
     float? RevisedTotalConsideration);

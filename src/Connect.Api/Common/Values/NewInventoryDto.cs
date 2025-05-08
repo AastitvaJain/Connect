@@ -7,7 +7,10 @@ public sealed record NewInventoryDto(
     string UnitNo,
     float BuiltUpArea,
     float Rate,
-    float TotalConsideration)
+    float TotalConsideration,
+    float? BookingAmount,
+    float? RevisedRate,
+    float? RevisedTotalConsideration)
 {
     public static NewInventoryDto ToDto(NewInventory newInventory)
     {
@@ -17,9 +20,10 @@ public sealed record NewInventoryDto(
             newInventory.ProjectType,
             newInventory.UnitNo,
             newInventory.BuiltUpArea,
-            (float)(newInventory.RevisedRate is null or 0 ? newInventory.Rate : newInventory.RevisedRate),
-            (float)(newInventory.RevisedTotalConsideration is null or 0
-                ? newInventory.TotalConsideration
-                : newInventory.RevisedTotalConsideration));
+            newInventory.Rate,
+            newInventory.TotalConsideration,
+            newInventory.BookingAmount,
+            newInventory.RevisedRate,
+            newInventory.RevisedTotalConsideration);
     }
 }

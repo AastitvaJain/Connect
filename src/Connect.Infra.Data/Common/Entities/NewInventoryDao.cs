@@ -41,6 +41,7 @@ public class NewInventoryDao
             dao.BuiltUpArea,
             dao.Rate,
             dao.TotalConsideration,
+            dao.BookingAmount,
             dao.RevisedRate,
             dao.RevisedTotalConsideration);
     }
