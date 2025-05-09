@@ -30,6 +30,26 @@ internal class ClientTokenStore(ConnectDbContext context)
                 dao.ClientPayment.CustomChannelPartnerNumber) : null);
     }
     
+    public async Task<bool> CheckSellRecords(List<PropertyRecord> sellRecords, CancellationToken cancellationToken)
+    {
+        var recordIds = sellRecords.Select(x => x.Id).ToList();
+
+        var matchedCount = await context.ReadOnlySet<SoldInventoryDao>()
+            .CountAsync(x => recordIds.Contains(x.Id), cancellationToken);
+
+        return matchedCount == recordIds.Count;
+    }
+    
+    public async Task<bool> CheckBuyRecords(List<PropertyRecord> buyRecords, CancellationToken cancellationToken)
+    {
+        var recordIds = buyRecords.Select(x => x.Id).ToList();
+
+        var matchedCount = await context.ReadOnlySet<NewInventoryDao>()
+            .CountAsync(x => recordIds.Contains(x.Id), cancellationToken);
+
+        return matchedCount == recordIds.Count;
+    }
+    
     public async Task<List<SoldInventory>?> GetSoldInventories(ClientToken clientToken, CancellationToken cancellationToken)
     {
         List<PropertyRecordDao> records = await context.ReadOnlySet<PropertyRecordDao>()
@@ -41,7 +61,7 @@ internal class ClientTokenStore(ConnectDbContext context)
             return null;
         }
         
-        List<SoldInventoryDao> daos = await context.SoldInventory
+        List<SoldInventoryDao> daos = await context.ReadOnlySet<SoldInventoryDao>()
             .Where(x => records.Select(r => r.PropertyRecordId).Contains(x.Id))
             .ToListAsync(cancellationToken);
         
@@ -59,7 +79,7 @@ internal class ClientTokenStore(ConnectDbContext context)
             return null;
         }
         
-        List<NewInventoryDao> daos = await context.NewInventory
+        List<NewInventoryDao> daos = await context.ReadOnlySet<NewInventoryDao>()
             .Where(x => records.Select(r => r.PropertyRecordId).Contains(x.Id))
             .ToListAsync(cancellationToken);
         

@@ -4,7 +4,7 @@ internal sealed class Store(ConnectDbContext context) : ClientTokenStore(context
 {
     private readonly ConnectDbContext _context = context;
 
-    public async Task<bool> TryUpdate(Client client, UserId userId, CancellationToken cancellationToken)
+    public async Task<bool> TryUpdate(Client client, UserId userId, DateTime time, CancellationToken cancellationToken)
     {
         var token = client.Token;
 
@@ -50,98 +50,68 @@ internal sealed class Store(ConnectDbContext context) : ClientTokenStore(context
                 dao.ClientPayment.CustomChannelPartnerNumber = client.Payment.CustomChannelPartnerNumber;
             }
         }
+        
+        if (dao.SellRecords?.Count > 0)
+            _context.PropertyRecords.RemoveRange(dao.SellRecords);
 
-        if (client.SellRecords is not null && client.SellRecords.Count > 0)
-        {
-            // 1. Track incoming IDs
-            var incomingIds = client.SellRecords.Select(x => x.Id).ToHashSet();
-
-            // 2. Remove obsolete records
-            var toRemove = dao.SellRecords?
-                .Where(x => !incomingIds.Contains(x.PropertyRecordId))
-                .ToList();
-
-            if (toRemove?.Count > 0)
-                _context.PropertyRecords.RemoveRange(toRemove);
-
-            // 3. Add new or update existing
-            foreach (var incoming in client.SellRecords)
+        dao.SellRecords = client.SellRecords?
+            .Select(x => new PropertyRecordDao
             {
-                var existing = dao.SellRecords?.FirstOrDefault(x => x.PropertyRecordId == incoming.Id);
-
-                if (existing is not null)
-                {
-                    // Update fields
-                    existing.OriginalRate = incoming.OriginalRate;
-                    existing.DraftRate = incoming.DraftRate;
-                    existing.RequestedRate = incoming.RequestedRate;
-                    existing.ApprovedRate = incoming.ApprovedRate;
-                    existing.PaymentPlan = incoming.PaymentPlan;
-                }
-                else
-                {
-                    dao.SellRecords?.Add(new PropertyRecordDao
-                    {
-                        PropertyRecordId = incoming.Id,
-                        OriginalRate = incoming.OriginalRate,
-                        DraftRate = incoming.DraftRate,
-                        RequestedRate = incoming.RequestedRate,
-                        ApprovedRate = incoming.ApprovedRate,
-                        PaymentPlan = incoming.PaymentPlan,
-                        SellerId = dao.Id,
-                        SellerSequence = dao.Sequence
-                    });
-                }
-            }
-        }
-
-
-        if (client.BuyRecords is not null && client.BuyRecords.Count > 0)
-        {
-            var incomingIds = client.BuyRecords.Select(x => x.Id).ToHashSet();
-
-            // 1. Remove obsolete records
-            var toRemove = dao.BuyRecords?
-                .Where(x => !incomingIds.Contains(x.PropertyRecordId))
-                .ToList();
-
-            if (toRemove?.Count > 0)
-                _context.PropertyRecords.RemoveRange(toRemove);
-
-            // 2. Add or update records
-            foreach (var incoming in client.BuyRecords)
-            {
-                var existing = dao.BuyRecords?.FirstOrDefault(x => x.PropertyRecordId == incoming.Id);
-
-                if (existing is not null)
-                {
-                    // Update fields
-                    existing.OriginalRate = incoming.OriginalRate;
-                    existing.DraftRate = incoming.DraftRate;
-                    existing.RequestedRate = incoming.RequestedRate;
-                    existing.ApprovedRate = incoming.ApprovedRate;
-                    existing.PaymentPlan = incoming.PaymentPlan;
-                }
-                else
-                {
-                    dao.BuyRecords?.Add(new PropertyRecordDao
-                    {
-                        PropertyRecordId = incoming.Id,
-                        OriginalRate = incoming.OriginalRate,
-                        DraftRate = incoming.DraftRate,
-                        RequestedRate = incoming.RequestedRate,
-                        ApprovedRate = incoming.ApprovedRate,
-                        PaymentPlan = incoming.PaymentPlan,
-                        BuyerId = dao.Id,
-                        BuyerSequence = dao.Sequence
-                    });
-                }
-            }
-        }
+                PropertyRecordId = x.Id,
+                OriginalRate = x.OriginalRate,
+                DraftRate = x.DraftRate,
+                RequestedRate = x.RequestedRate,
+                ApprovedRate = x.ApprovedRate,
+                PaymentPlan = x.PaymentPlan
+            }).ToList() ?? [];
 
         
-        await _context.SaveChangesAsync(cancellationToken);
+        if (dao.BuyRecords?.Count > 0)
+            _context.PropertyRecords.RemoveRange(dao.BuyRecords);
 
+        dao.BuyRecords = client.BuyRecords?
+            .Select(x => new PropertyRecordDao
+            {
+                PropertyRecordId = x.Id,
+                OriginalRate = x.OriginalRate,
+                DraftRate = x.DraftRate,
+                RequestedRate = x.RequestedRate,
+                ApprovedRate = x.ApprovedRate,
+                PaymentPlan = x.PaymentPlan,
+                BuyerId = token.Id,
+                BuyerSequence = token.Sequence
+            }).ToList() ?? [];
+
+        
+        dao.UpdatedBy = userId.Value;
+        dao.UpdatedAt = time;
+            
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            foreach (var entry in ex.Entries)
+            {
+                Console.WriteLine("Concurrency conflict on:");
+                Console.WriteLine($"Entity type: {entry.Entity.GetType().Name}");
+                Console.WriteLine($"Entity state: {entry.State}");
+
+                // Optional: print primary key values
+                var pk = _context.Entry(entry.Entity).Properties
+                    .Where(p => p.Metadata.IsPrimaryKey())
+                    .ToDictionary(p => p.Metadata.Name, p => p.CurrentValue);
+
+                foreach (var kvp in pk)
+                {
+                    Console.WriteLine($"  PK {kvp.Key} = {kvp.Value}");
+                }
+            }
+
+            return false;
+        }
+        
         return true;
         
     }

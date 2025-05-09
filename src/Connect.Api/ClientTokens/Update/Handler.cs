@@ -19,17 +19,27 @@ internal sealed class Handler(IStore store) : IHandler
         {
             return new NotFoundResult();
         }
+        
+        if (sellRecords is not null && !await store.CheckSellRecords(sellRecords, cancellationToken))
+        {
+            return new NotFoundResult();
+        }
+
+        if (buyRecords is not null && !await store.CheckBuyRecords(buyRecords, cancellationToken))
+        {
+            return new NotFoundResult();
+        }
 
         Client updatedClient = new(
             token,
             name ?? client.Name,
-            email ?? client.EmailId,
-            phoneNumber ?? client.PhoneNo,
-            sellRecords ?? client.SellRecords,
-            buyRecords ?? client.BuyRecords,
-            payment ?? client.Payment);
+            email,
+            phoneNumber,
+            sellRecords,
+            buyRecords,
+            payment);
 
-        if (!await store.TryUpdate(updatedClient, userId, cancellationToken)) 
+        if (!await store.TryUpdate(updatedClient, userId, currentTime, cancellationToken)) 
             return new CouldNotUpdateResult();
         
         List<SoldInventory> soldInventories = await store.GetSoldInventories(token, cancellationToken) ?? [];
