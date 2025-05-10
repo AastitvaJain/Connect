@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Connect.Accounts;
+using Connect.Admins;
 using Connect.ClientTokens;
 using Connect.Configs;
 using Connect.Inventories;
@@ -50,6 +51,8 @@ internal static class Module
         services.ConfigureConfigsModule();
         services.ConfigureInventoriesModule();
         services.ConfigureClientTokenModule();
+
+        services.ConfigureAdminModule();
     }
     
     public static void MapMiddlewares(this WebApplication app)
@@ -87,6 +90,8 @@ internal static class Module
         endpoints.MapConfigsEndpoints();
         endpoints.MapInventoriesEndpoints();
         endpoints.MapClientTokenEndpoints();
+
+        endpoints.MapAdminEndpoints();
     }
     
     private static void ConfigureCors(this IServices services)

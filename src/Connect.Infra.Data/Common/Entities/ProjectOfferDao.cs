@@ -1,6 +1,6 @@
 namespace Connect;
 
-public class ProjectOfferDao
+public class ProjectOfferDao : BaseEntity
 {
     [Required]
     [MaxLength(10)]
@@ -11,4 +11,10 @@ public class ProjectOfferDao
     public required string ProjectName { get; set; }
     
     public float? OfferAmount { get; set; }
+    
+    public long? CreatedBy { get; set; } 
+    
+    public long? UpdatedBy { get; set; } 
+    
+    public AccountDao? UpdatedByAccount { get; set; }
 }

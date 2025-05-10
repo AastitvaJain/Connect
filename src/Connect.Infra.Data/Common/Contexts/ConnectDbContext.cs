@@ -241,7 +241,7 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.Property(e => e.CreatedBy)
                 .HasColumnName("created_by");
             
-            entity.Property(e => e.CreatedBy)
+            entity.Property(e => e.UpdatedBy)
                 .HasColumnName("updated_by");
 
             // One-to-many SellRecords
@@ -399,6 +399,17 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
 
             entity.Property(e => e.OfferAmount)
                 .HasColumnName("offer_amount");
+            
+            entity.Property(e => e.CreatedBy)
+                .HasColumnName("created_by");
+            
+            entity.Property(e => e.UpdatedBy)
+                .HasColumnName("updated_by");
+            
+            entity.HasOne(e => e.UpdatedByAccount)
+                .WithMany()
+                .HasForeignKey(e => e.UpdatedBy)
+                .OnDelete(DeleteBehavior.Restrict);
         });
         
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
@@ -408,13 +419,11 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
 
             modelBuilder.Entity(entityType.ClrType)
                 .Property(nameof(BaseEntity.CreatedAt))
-                .HasColumnName("created_at")
-                .IsRequired();
+                .HasColumnName("created_at");
 
             modelBuilder.Entity(entityType.ClrType)
                 .Property(nameof(BaseEntity.UpdatedAt))
-                .HasColumnName("updated_at")
-                .IsRequired();
+                .HasColumnName("updated_at");
         }
     }
 
