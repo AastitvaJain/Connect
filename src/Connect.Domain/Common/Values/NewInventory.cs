@@ -9,5 +9,4 @@ public sealed record NewInventory(
     float Rate,
     float TotalConsideration,
     float? BookingAmount,
-    float? RevisedRate,
-    float? RevisedTotalConsideration);
+    float? Premium);

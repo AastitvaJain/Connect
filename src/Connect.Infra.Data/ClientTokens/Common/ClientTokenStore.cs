@@ -9,6 +9,7 @@ internal class ClientTokenStore(ConnectDbContext context)
             .Include(c => c.SellRecords)
             .Include(c => c.BuyRecords)
             .Include(c => c.ClientPayment)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(cancellationToken);
         
         if(dao is null)

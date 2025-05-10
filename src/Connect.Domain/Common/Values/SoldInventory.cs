@@ -14,4 +14,4 @@ public sealed record SoldInventory(
     float TotalConsideration,
     float NetReceived,
     float AssuredPrice,
-    float? RevisedAssuredPrice);
+    float? Discount);

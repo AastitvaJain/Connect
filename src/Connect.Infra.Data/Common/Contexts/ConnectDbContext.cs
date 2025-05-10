@@ -17,6 +17,8 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
     
     public DbSet<ClientPaymentDao> ClientPayments { get; set; }
     
+    public DbSet<ProjectOfferDao> ProjectOffer { get; set; }
+    
     public IQueryable<T> ReadOnlySet<T>() where T : class =>
         Set<T>().AsNoTracking();
     
@@ -156,8 +158,8 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .HasColumnName("assured_price")
                 .HasMaxLength(255);
 
-            entity.Property(e => e.RevisedAssuredPrice)
-                .HasColumnName("revised_assured_price");
+            entity.Property(e => e.Discount)
+                .HasColumnName("discount");
         });
         
         modelBuilder.Entity<NewInventoryDao>(entity =>
@@ -205,11 +207,8 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.Property(e => e.BookingAmount)
                 .HasColumnName("booking_amount");
 
-            entity.Property(e => e.RevisedRate)
-                .HasColumnName("revised_rate");
-
-            entity.Property(e => e.RevisedTotalConsideration)
-                .HasColumnName("revised_total_consideration");
+            entity.Property(e => e.Premium)
+                .HasColumnName("premium");
         });
         
         modelBuilder.Entity<ClientDao>(entity =>

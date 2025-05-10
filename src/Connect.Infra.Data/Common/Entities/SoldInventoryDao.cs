@@ -51,7 +51,7 @@ public class SoldInventoryDao
     [MaxLength(255)]
     public string? AssuredPrice { get; set; }
     
-    public float? RevisedAssuredPrice { get; set; }
+    public float? Discount { get; set; }
 
     public static SoldInventory ToSoldInventory(SoldInventoryDao dao)
     {
@@ -69,6 +69,6 @@ public class SoldInventoryDao
             dao.TotalConsideration,
             dao.NetReceived,
             float.TryParse(dao.AssuredPrice, out var price) ? price : 0,
-            dao.RevisedAssuredPrice);
+            dao.Discount);
     }
 }

@@ -31,9 +31,7 @@ public class NewInventoryDao
     
     public float? BookingAmount { get; set; }
     
-    public float? RevisedRate { get; set; }
-    
-    public float? RevisedTotalConsideration { get; set; }
+    public float? Premium { get; set; }
 
     public static NewInventory ToNewInventory(NewInventoryDao dao)
     {
@@ -46,7 +44,6 @@ public class NewInventoryDao
             dao.Rate,
             dao.TotalConsideration,
             dao.BookingAmount,
-            dao.RevisedRate,
-            dao.RevisedTotalConsideration);
+            dao.Premium);
     }
 }

@@ -9,8 +9,7 @@ public sealed record NewInventoryDto(
     float Rate,
     float TotalConsideration,
     float? BookingAmount,
-    float? RevisedRate,
-    float? RevisedTotalConsideration)
+    float? Premium)
 {
     public static NewInventoryDto ToDto(NewInventory newInventory)
     {
@@ -23,7 +22,6 @@ public sealed record NewInventoryDto(
             newInventory.Rate,
             newInventory.TotalConsideration,
             newInventory.BookingAmount,
-            newInventory.RevisedRate,
-            newInventory.RevisedTotalConsideration);
+            newInventory.Premium);
     }
 }
