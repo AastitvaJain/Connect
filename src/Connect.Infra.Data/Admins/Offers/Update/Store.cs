@@ -23,17 +23,17 @@ internal sealed class Store(ConnectDbContext context) : IStore
 
         try
         {
-            foreach (var record in existingRecords)
+            foreach (ProjectOffer offer in list)
             {
-                var update = list.FirstOrDefault(x => x.Id == record.Id);
+                var record = existingRecords.FirstOrDefault(x => string.Equals(x.Id, offer.Id));
 
-                if (update is null)
-                    return null;
-            
-                if (Math.Abs((record.OfferAmount ?? 0) - update.OfferAmount) < Tolerance)
+                if (record is null)
+                    return [];
+                
+                if (Math.Abs((record.OfferAmount ?? 0) - offer.OfferAmount) < Tolerance)
                     continue;
             
-                record.OfferAmount = update.OfferAmount;
+                record.OfferAmount = offer.OfferAmount;
                 record.UpdatedBy = userId.Value;
                 record.UpdatedAt = time;
             
@@ -54,6 +54,7 @@ internal sealed class Store(ConnectDbContext context) : IStore
                         cancellationToken);
                 }
             }
+            
             
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);

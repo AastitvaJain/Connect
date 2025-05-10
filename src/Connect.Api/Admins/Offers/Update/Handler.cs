@@ -19,7 +19,9 @@ internal sealed class Handler(IStore store) : IHandler
         List<ProjectOffer>? updatedOffers = await store.TryUpdate(offers, userId, time, cancellationToken);
 
         return updatedOffers is not null
-            ? new UpdatedResult(updatedOffers)
+            ? updatedOffers.Count > 0 ?
+                new UpdatedResult(updatedOffers) 
+                : new NotFoundResult()
             : new CouldNotUpdateResult();
     }
 }
