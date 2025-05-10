@@ -14,6 +14,10 @@ public class SoldInventoryDao
     public string? BookingDate { get; set; }
     
     [Required]
+    [MaxLength(10)]
+    public required string PropertyId { get; set; }
+    
+    [Required]
     [MaxLength(255)]
     public string ProjectName { get; set; } = string.Empty;
     

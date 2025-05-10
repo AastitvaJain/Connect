@@ -5,6 +5,10 @@ public class NewInventoryDao
     public Guid Id { get; set; } = Guid.NewGuid();
     
     [Required]
+    [MaxLength(10)]
+    public required string PropertyId { get; set; }
+    
+    [Required]
     [MaxLength(255)]
     public string ProjectName { get; set; } = string.Empty;
     

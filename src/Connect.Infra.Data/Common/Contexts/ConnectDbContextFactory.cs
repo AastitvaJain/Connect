@@ -10,7 +10,7 @@ public class ConnectDbContextFactory : IDesignTimeDbContextFactory<ConnectDbCont
         var optionsBuilder = new DbContextOptionsBuilder<ConnectDbContext>();
 
         // Use your actual connection string here
-        var connectionString = "Host=connect-db.c3qc60mess1q.ap-south-1.rds.amazonaws.com;Port=5432;Database=connectDevTest;Username=connect_admin;Password=B4WbPRhZwcIFE8o9FdAd;SslMode=Require;";
+        var connectionString = "Host=localhost;Port=15432;Database=connectDev;Username=postgres;Password=rShEiRwsuG6UgyhRbjpl;SslMode=Require;";
         
         optionsBuilder.UseNpgsql(connectionString);
 

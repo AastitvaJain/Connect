@@ -107,6 +107,11 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .HasColumnName("booking_date")
                 .HasMaxLength(255);
             
+            entity.Property(e => e.PropertyId)
+                .HasColumnName("property_id")
+                .HasMaxLength(10)
+                .IsRequired();
+            
             entity.Property(e => e.ProjectName)
                 .HasColumnName("project_name")
                 .HasMaxLength(255)
@@ -164,6 +169,11 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.Property(e => e.Id)
                 .HasColumnName("id")
                 .HasDefaultValueSql("gen_random_uuid()"); // PostgresSQL UUID generation
+
+            entity.Property(e => e.PropertyId)
+                .HasColumnName("property_id")
+                .HasMaxLength(10)
+                .IsRequired();
 
             entity.Property(e => e.ProjectName)
                 .HasColumnName("project_name")
@@ -370,6 +380,25 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .WithMany()
                 .HasForeignKey(e => e.ChannelPartnerId)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<ProjectOfferDao>(entity =>
+        {
+            entity.ToTable("project_offer");
+
+            entity.HasKey(e => e.Id);
+            
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasMaxLength(10);
+
+            entity.Property(e => e.ProjectName)
+                .HasColumnName("project_name")
+                .HasMaxLength(255)
+                .IsRequired();
+
+            entity.Property(e => e.OfferAmount)
+                .HasColumnName("offer_amount");
         });
         
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())

@@ -1,10 +1,11 @@
 import { request } from './request';
 import type { InventoryRequest } from '../models/requests/InventoryRequest';
 import type { SoldInventoryDto, NewInventoryDto } from '../models/InventoryDto';
+import { PagedResult } from '../models/PagedResult';
 
 // POST /get/new-inventory
 export const getNewInventory = (data: InventoryRequest) =>
-  request<NewInventoryDto[]>({
+  request<PagedResult<NewInventoryDto>>({
     method: 'POST',
     url: '/get/new-inventory',
     data,
@@ -13,7 +14,7 @@ export const getNewInventory = (data: InventoryRequest) =>
 
 // POST /get/sold-inventory
 export const getSoldInventory = (data: InventoryRequest) =>
-  request<SoldInventoryDto[]>({
+  request<PagedResult<SoldInventoryDto>>({
     method: 'POST',
     url: '/get/sold-inventory',
     data,
