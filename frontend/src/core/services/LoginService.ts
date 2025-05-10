@@ -37,7 +37,14 @@ export const login = async (emailId: string, password: string) => {
   setNewProjectNames(newNames.map(p => p.projectName || ''));
   setSoldProjectNames(soldNames.map(p => p.projectName || ''));
 
-  return user.authUser.user;
+  return {
+    user: user.authUser.user,
+    config: {
+      channelPartners: partners,
+      newProjectNames: newNames,
+      soldProjectNames: soldNames,
+    }
+  };
 };
 
 export const logout = async () => {

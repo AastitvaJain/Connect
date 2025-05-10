@@ -1,5 +1,5 @@
 import { getChannelPartnersApi, getNewProjectNamesApi, getSoldProjectNamesApi } from "../api/configApi";
-import { setChannelPartners, setNewProjectNames, setSoldProjectNames } from "../utils/config";
+import { getChannelPartnersStore, getNewProjectNamesStore, getSoldProjectNamesStore, setChannelPartners, setNewProjectNames, setSoldProjectNames } from "../utils/config";
 
 export const refreshConfig = async () => {
     
@@ -15,13 +15,28 @@ export const refreshConfig = async () => {
 };
 
 export const getChannelPartners = () => {
-    return getChannelPartnersApi();
+
+    if(getChannelPartnersStore().length === 0) {
+        refreshConfig();
+    }
+
+    return getChannelPartnersStore();
 };
 
 export const getNewProjectNames = () => {
-    return getNewProjectNamesApi();
+
+    if(getNewProjectNamesStore().length === 0) {
+        refreshConfig();
+    }
+    
+    return getNewProjectNamesStore();
 };
 
 export const getSoldProjectNames = () => {
-    return getSoldProjectNamesApi();
+    
+    if(getSoldProjectNamesStore().length === 0) {
+        refreshConfig();
+    }
+    
+    return getSoldProjectNamesStore();
 };

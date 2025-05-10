@@ -12,8 +12,10 @@ export interface SoldInventoryDto extends BaseInventory {
   buyerName: string;
   netReceived: number;
   assuredPrice: number;
+  discount?: number;
 }
 
 export interface NewInventoryDto extends BaseInventory {
   bookingAmount: number;
+  premium?: number;
 }

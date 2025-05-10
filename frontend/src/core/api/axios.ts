@@ -9,7 +9,7 @@ import {
 import { createAuth } from './accountApi'; // this calls the refresh token endpoint
 
 const instance = axios.create({
-  baseURL: "https://7saykmdyg2.ap-south-1.awsapprunner.com",
+  baseURL: "https://mhyakc5h8c.ap-south-1.awsapprunner.com/",
   headers: {
     'Content-Type': 'application/json'
   }

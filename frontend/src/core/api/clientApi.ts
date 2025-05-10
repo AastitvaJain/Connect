@@ -14,11 +14,11 @@ export const createClientToken = (data: CreateClientTokenRequest) =>
   });
 
 export const getClientToken = (token: number) =>
-  request<ClientDto>({
+  request<{ clientData: ClientDto } | ClientDto>({
     method: 'GET',
     url: `/client-token/${token}`,
     withAuth: true
-  });
+  }).then(resp => ('clientData' in resp ? resp.clientData : resp));
 
 export const updateClientToken = (token: number, data: UpdateClientTokenRequest) =>
   request<ClientDto>({
