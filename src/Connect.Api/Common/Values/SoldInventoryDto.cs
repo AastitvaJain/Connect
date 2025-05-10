@@ -12,7 +12,7 @@ public sealed record SoldInventoryDto(
     float TotalConsideration,
     float NetReceived,
     float AssuredPrice,
-    float? Discount)
+    float? SoldOffer)
 {
     public static SoldInventoryDto ToDto(SoldInventory soldInventory)
     {

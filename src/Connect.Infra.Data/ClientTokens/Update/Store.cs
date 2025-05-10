@@ -12,6 +12,7 @@ internal sealed class Store(ConnectDbContext context) : ClientTokenStore(context
             .Include(c => c.ClientPayment)
             .Include(c => c.SellRecords)
             .Include(c => c.BuyRecords)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(c =>
                     c.Id == token.Id &&
                     c.Sequence == token.Sequence,

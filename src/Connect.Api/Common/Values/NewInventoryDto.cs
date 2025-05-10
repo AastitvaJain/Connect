@@ -9,7 +9,7 @@ public sealed record NewInventoryDto(
     float Rate,
     float TotalConsideration,
     float? BookingAmount,
-    float? Premium)
+    float? NewOffer)
 {
     public static NewInventoryDto ToDto(NewInventory newInventory)
     {

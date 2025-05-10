@@ -2,7 +2,7 @@ namespace Connect;
 
 public class ClientPaymentDao : BaseEntity  
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; }
     
     public float AmountPaid { get; set; }
     

@@ -2,7 +2,7 @@ namespace Connect;
 
 public class SoldInventoryDao
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; }
     
     [MaxLength(255)]
     public string? SrNo { get; set; }

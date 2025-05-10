@@ -2,7 +2,7 @@ namespace Connect;
 
 public class ChannelPartnerDao
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; }
 
     [Required]
     [MaxLength(255)]
