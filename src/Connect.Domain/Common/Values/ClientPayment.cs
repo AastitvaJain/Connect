@@ -5,6 +5,6 @@ public sealed record ClientPayment(
     float AmountPaid,
     string PaymentMode,
     string PaymentId,
-    Guid? ChannelPartnerId,
+    string? ChannelPartnerId,
     string? CustomChannelPartnerName,
     string? CustomChannelPartnerNumber);

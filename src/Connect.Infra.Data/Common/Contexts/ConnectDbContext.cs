@@ -382,7 +382,8 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .IsRequired();
 
             entity.Property(e => e.ChannelPartnerId)
-                .HasColumnName("channel_partner_id");
+                .HasColumnName("channel_partner_id")
+                .HasMaxLength(255);
 
             entity.Property(e => e.CustomChannelPartnerName)
                 .HasColumnName("custom_channel_partner_name")
@@ -396,12 +397,6 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .WithOne(c => c.ClientPayment)
                 .HasForeignKey<ClientPaymentDao>(p => new { p.ClientId, p.ClientSequence })
                 .OnDelete(DeleteBehavior.Cascade);
-
-            // Optional FK to ChannelPartnerDao
-            entity.HasOne(e => e.ChannelPartner)
-                .WithMany()
-                .HasForeignKey(e => e.ChannelPartnerId)
-                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<ProjectOfferDao>(entity =>

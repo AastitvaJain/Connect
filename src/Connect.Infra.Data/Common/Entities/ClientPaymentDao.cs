@@ -18,7 +18,8 @@ public class ClientPaymentDao : BaseEntity
     public required int ClientSequence { get; set; } 
     public ClientDao? Client { get; set; }
     
-    public Guid? ChannelPartnerId { get; set; }
+    [MaxLength(255)]
+    public string? ChannelPartnerId { get; set; }
     public ChannelPartnerDao? ChannelPartner { get; set; }
     
     public string? CustomChannelPartnerName { get; set; }
