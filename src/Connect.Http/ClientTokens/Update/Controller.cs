@@ -58,6 +58,12 @@ internal sealed class Controller(IHandler handler, ITimer timer) : IController
             return null;
         }
         
+        if(request.Payment is not null && 
+           (request.Payment.AmountPaid <= 0 
+            || string.IsNullOrEmpty(request.Payment.PaymentId) 
+            || string.IsNullOrEmpty(request.Payment.PaymentMode)))
+            return null;
+        
         return new Command(
             userId,
             clientToken!, 
