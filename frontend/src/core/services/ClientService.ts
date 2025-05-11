@@ -26,7 +26,10 @@ export const generateTokenForExistingCustomer = async (
 
   const payload: CreateClientTokenRequest = {
     name,
-    sellRecords
+    sellRecords: sellRecords.map(record => ({
+      id: record.id,
+      originalrate: record.rate
+    }))
   };
 
   const response = await createClientToken(payload);
@@ -123,6 +126,6 @@ export const updatePayment = async (
     sellRecords: sellRecords,
     buyRecords: buyRecords
   });
-  
+
   return response;
 };

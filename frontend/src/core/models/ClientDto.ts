@@ -1,9 +1,9 @@
 import { SoldInventoryDto, NewInventoryDto } from "./InventoryDto";
 export interface PropertyRecord {
     id: string;
-    rate: number;
-    draftRate?: number;
-    approvedRate?: number;
+    originalrate: number;
+    draftRate?: number; 
+    approvedRate?: number; 
     paymentPlan?: string;
   }
   
