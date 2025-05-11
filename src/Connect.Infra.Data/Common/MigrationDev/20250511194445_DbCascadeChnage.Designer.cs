@@ -3,6 +3,7 @@ using System;
 using Connect;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Connect.Common.MigrationDev
 {
     [DbContext(typeof(ConnectDbContext))]
-    partial class ConnectDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250511194445_DbCascadeChnage")]
+    partial class DbCascadeChnage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -247,9 +250,8 @@ namespace Connect.Common.MigrationDev
                         .HasColumnType("character varying(1000)")
                         .HasColumnName("note");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
                         .HasColumnName("status");
 
                     b.Property<DateTime>("UpdatedAt")

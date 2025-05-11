@@ -1,3 +1,4 @@
+using Connect.Requests.Approve;
 using Connect.Requests.Create;
 using Connect.Requests.Reject;
 
@@ -9,11 +10,13 @@ public static class Module
     {
         endpoints.MapCreateRequests();
         endpoints.MapRejectRequests();
+        endpoints.MapApproveRequests();
     }
 
     public static void ConfigureRequestsModule(this IServices services)
     {
         services.ConfigureCreateRequests();
         services.ConfigureRejectRequests();
+        services.ConfigureApproveRequests();
     }
 }

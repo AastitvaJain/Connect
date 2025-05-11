@@ -1,15 +1,11 @@
 namespace Connect.Requests.Reject;
 
-internal sealed class Store(ConnectDbContext context) : IStore
+internal sealed class Store(ConnectDbContext context) : RequestStore(context), IStore
 {
-    public async Task<bool> RequestExists(long requestId, CancellationToken cancellationToken)
-    {
-        return await context.ApproveRequests.AnyAsync(x => x.Id == requestId, cancellationToken: cancellationToken);
-    }
-
+    private readonly ConnectDbContext _context = context;
     public async Task<bool> TryReject(long requestId, string reason, UserId userId, DateTime time, CancellationToken cancellationToken)
     {
-        var dao = await context.ApproveRequests.SingleOrDefaultAsync(x => x.Id == requestId, cancellationToken);
+        var dao = await _context.ApproveRequests.SingleOrDefaultAsync(x => x.Id == requestId, cancellationToken);
         
         if(dao is null)
             return false;
@@ -19,7 +15,7 @@ internal sealed class Store(ConnectDbContext context) : IStore
         dao.UpdatedBy = userId.Value;
         dao.UpdatedAt = time;
         
-        await context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return true;
     }

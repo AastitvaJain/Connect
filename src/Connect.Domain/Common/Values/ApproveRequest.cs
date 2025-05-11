@@ -6,4 +6,5 @@ public sealed record ApproveRequest(
     List<ApprovalPropertyRecord> BuyPropertyChanges,
     List<ApprovalCostSheet> CostSheets,
     bool IsApplied,
+    string? Note,
     long? Id = null);

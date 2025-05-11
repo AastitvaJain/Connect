@@ -1,17 +1,15 @@
-using Connect.ClientTokens.Update;
-
-namespace Connect.Requests.Create;
+namespace Connect.Requests.Approve;
 
 public interface IController
 {
-    Task Handle(HttpContext context, long? userIdValue, int? tokenValue, Request? request);
+    Task Handle(HttpContext context, long? userIdValue, Request? request);
 }
 
 internal sealed class Controller(IHandler handler, ITimer timer) : IController
 {
-    public async Task Handle(HttpContext context, long? userIdValue, int? tokenValue, Request? request)
+    public async Task Handle(HttpContext context, long? userIdValue, Request? request)
     {
-        Command? command = CreateCommand(userIdValue, tokenValue, request);
+        Command? command = CreateCommand(request, userIdValue);
 
         if (command is not null)
         {
@@ -19,10 +17,9 @@ internal sealed class Controller(IHandler handler, ITimer timer) : IController
             
             await (result switch
             {
-                CreatedResult data => context.Ok(data),
-                CouldNotCreateResult => context.Status(Status500InternalServerError),
+                ApprovedResult => context.Status(Status202Accepted),
                 NotFoundResult => context.Status(Status404NotFound),
-                AlreadyCreatedResult => context.Status(Status409Conflict),
+                CouldNotApproveResult => context.Status(Status500InternalServerError),
                 _ => throw new NotImplementedException()
             });       
         }
@@ -32,14 +29,9 @@ internal sealed class Controller(IHandler handler, ITimer timer) : IController
         }
     }
     
-    private Command? CreateCommand(long? userIdValue, int? tokenValue, Request? request)
+    private Command? CreateCommand(Request? request, long? userIdValue)
     {
         if (!UserId.TryParse(userIdValue, out UserId userId))
-        {
-            return null;
-        }
-
-        if (!ClientToken.TryParse(tokenValue, out ClientToken? clientToken))
         {
             return null;
         }
@@ -47,6 +39,11 @@ internal sealed class Controller(IHandler handler, ITimer timer) : IController
         if (request is null)
         {
             return null;       
+        }
+
+        if (request.RequestId is null || request.RequestId.Value <= 0)
+        {
+            return null;      
         }
 
         if (request.BuyPropertyChanges is null || request.BuyPropertyChanges.Count == 0)
@@ -60,13 +57,14 @@ internal sealed class Controller(IHandler handler, ITimer timer) : IController
             return null;      
         }
         
-        return new Command(userId, clientToken!, new ApproveRequest(
-            RequestStatus.Pending,
-            request.SellPropertyChanges,
-            request.BuyPropertyChanges,
-            request.CostSheet,
-            false,
-            string.Empty),
+        return new Command(userId, (long)request.RequestId , new ApproveRequest(
+                RequestStatus.Approved,
+                request.SellPropertyChanges,
+                request.BuyPropertyChanges,
+                request.CostSheet,
+                true,
+                request.Reason ?? string.Empty),
             timer.UtcNow);       
     }
+
 }

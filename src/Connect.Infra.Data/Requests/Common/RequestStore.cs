@@ -14,4 +14,10 @@ internal class RequestStore(ConnectDbContext context)
             x => x.ApproveRequests != null && x.ApproveRequests.Any(y => y.Status == RequestStatus.Pending),
             cancellationToken: cancellationToken);
     }
+    
+    public async Task<bool> RequestExists(long requestId, CancellationToken cancellationToken)
+    {
+        return await context.ApproveRequests.AnyAsync(x => x.Id == requestId && x.Status == RequestStatus.Pending,
+            cancellationToken: cancellationToken);
+    }
 }

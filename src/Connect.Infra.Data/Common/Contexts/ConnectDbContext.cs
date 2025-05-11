@@ -23,6 +23,8 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
 
     public DbSet<ApproveRequestDao> ApproveRequests { get; set; }
     
+    public DbSet<ApprovalPropertyRecordDao> ApprovalPropertyRecords { get; set; }
+    
     public IQueryable<T> ReadOnlySet<T>() where T : class =>
         Set<T>().AsNoTracking();
     
@@ -255,13 +257,13 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasMany(e => e.SellRecords)
                 .WithOne(e => e.Seller)
                 .HasForeignKey(e => new { e.SellerId, e.SellerSequence })
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // One-to-many BuyRecords
             entity.HasMany(e => e.BuyRecords)
                 .WithOne(e => e.Buyer)
                 .HasForeignKey(e => new { e.BuyerId, e.BuyerSequence })
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // One-to-one ClientPayment
             entity.HasOne(e => e.ClientPayment)
@@ -272,12 +274,12 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasOne(e => e.CreatedByAccount)
                 .WithMany()
                 .HasForeignKey(e => e.CreatedBy)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
             
             entity.HasOne(e => e.UpdatedByAccount)
                 .WithMany()
                 .HasForeignKey(e => e.UpdatedBy)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasMany(e => e.ApproveRequests)
                 .WithOne(e => e.Client)
@@ -335,18 +337,18 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasOne(e => e.Seller)
                 .WithMany(c => c.SellRecords)
                 .HasForeignKey(e => new { e.SellerId, e.SellerSequence })
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Buyer (one-to-many)
             entity.HasOne(e => e.Buyer)
                 .WithMany(c => c.BuyRecords)
                 .HasForeignKey(e => new { e.BuyerId, e.BuyerSequence })
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
             
             entity.HasOne(e => e.NewLead)
                 .WithMany(c => c.SellRecords)
                 .HasForeignKey(e => e.NewLeadId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<ClientPaymentDao>(entity =>
@@ -426,7 +428,7 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasOne(e => e.UpdatedByAccount)
                 .WithMany()
                 .HasForeignKey(e => e.UpdatedBy)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<NewLeadDao>(entity =>
@@ -461,17 +463,17 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasOne(e => e.CreatedByAccount)
                 .WithMany()
                 .HasForeignKey(e => e.CreatedBy)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(e => e.UpdatedByAccount)
                 .WithMany()
                 .HasForeignKey(e => e.UpdatedBy)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasMany(e => e.SellRecords)
                 .WithOne(e => e.NewLead)
                 .HasForeignKey(e => e.NewLeadId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         });
         
         modelBuilder.Entity<ApproveRequestDao>(entity =>
@@ -495,6 +497,7 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
 
             entity.Property(e => e.Status)
                 .HasColumnName("status")
+                .HasConversion<string>()
                 .IsRequired();
 
             entity.Property(e => e.IsApplied)
@@ -514,32 +517,32 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasMany(e => e.SellPropertyChanges)
                 .WithOne(e => e.SellApproveRequest)
                 .HasForeignKey(e => e.SellApproveRequestId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
             
             entity.HasMany(e => e.BuyPropertyChanges)
                 .WithOne(e => e.BuyApproveRequest)
                 .HasForeignKey(e => e.BuyApproveRequestId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
             
             entity.HasMany(e => e.CostSheets)
                 .WithOne(e => e.ApproveRequest)
                 .HasForeignKey(e => e.ApproveRequestId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(e => e.CreatedByAccount)
                 .WithMany()
                 .HasForeignKey(e => e.CreatedBy)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(e => e.UpdatedByAccount)
                 .WithMany()
                 .HasForeignKey(e => e.UpdatedBy)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(e => e.Client)
                 .WithMany(c => c.ApproveRequests)
                 .HasForeignKey(e => new { e.ClientId, e.ClientSequence })
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<ApprovalPropertyRecordDao>(entity =>
@@ -573,12 +576,12 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasOne(e => e.SellApproveRequest)
                 .WithMany(e => e.SellPropertyChanges)
                 .HasForeignKey(e => e.SellApproveRequestId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
             
             entity.HasOne(e => e.BuyApproveRequest)
                 .WithMany(e => e.BuyPropertyChanges)
                 .HasForeignKey(e => e.BuyApproveRequestId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<ApprovalCostSheetDao>(entity =>
@@ -603,7 +606,7 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasMany(e => e.Items)
                 .WithOne(e => e.CostSheet)
                 .HasForeignKey(e => e.CostSheetId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
                 
         });
 
@@ -652,7 +655,7 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasOne(e => e.CostSheet)
                 .WithMany(e => e.Items)
                 .HasForeignKey(e => e.CostSheetId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         });
         
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())

@@ -15,6 +15,7 @@ internal sealed class Store(ConnectDbContext context) : RequestStore(context), I
             BuyPropertyChanges = request.BuyPropertyChanges.Select(ApprovalPropertyRecordDao.ToDao).ToList(),
             CostSheets = request.CostSheets.Select(ApprovalCostSheetDao.ToDao).ToList(),
             IsApplied = request.IsApplied,
+            Note = request.Note,
             CreatedBy = userId.Value,
             CreatedAt = time
         };
