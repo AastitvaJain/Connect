@@ -10,4 +10,5 @@ export interface CreateClientTokenRequest {
 export interface UpdateClientTokenRequest extends CreateClientTokenRequest {
   buyRecords?: PropertyRecord[];
   payment?: ClientPayment;
+  isSubmitted?: boolean;
 }

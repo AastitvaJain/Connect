@@ -4,6 +4,7 @@ import type {
   UpdateClientTokenRequest
 } from '../models/requests/ClientRequest';
 import type { ClientDto } from '../models/ClientDto';
+import { UpdateLeadRequest } from '../models/requests/UpdateLeadRequest';
 
 export const createClientToken = (data: CreateClientTokenRequest) =>
   request<{ token: number }>({
@@ -20,10 +21,19 @@ export const getClientToken = (token: number) =>
     withAuth: true
   }).then(resp => ('clientData' in resp ? resp.clientData : resp));
 
+
 export const updateClientToken = (token: number, data: UpdateClientTokenRequest) =>
   request<ClientDto>({
     method: 'PUT',
     url: `/client-token/${token}`,
+    data,
+    withAuth: true
+  });
+
+export const updateLeadStatusApi = (data: UpdateLeadRequest) =>
+  request<null>({
+    method: 'POST',
+    url: `/create-lead`,
     data,
     withAuth: true
   });
