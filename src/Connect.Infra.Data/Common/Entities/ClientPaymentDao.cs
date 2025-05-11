@@ -6,9 +6,13 @@ public class ClientPaymentDao : BaseEntity
     
     public float AmountPaid { get; set; }
     
+    [Required]
+    [MaxLength(255)]
     public required string PaymentMode { get; set; }
     
-    public required int PaymentId { get; set; }
+    [Required]
+    [MaxLength(255)]
+    public required string PaymentId { get; set; }
     
     public required int ClientId { get; set; }
     public required int ClientSequence { get; set; } 

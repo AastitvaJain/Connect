@@ -365,10 +365,12 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
 
             entity.Property(e => e.PaymentMode)
                 .HasColumnName("payment_mode")
+                .HasMaxLength(255)
                 .IsRequired();
 
             entity.Property(e => e.PaymentId)
                 .HasColumnName("payment_id")
+                .HasMaxLength(255)
                 .IsRequired();
 
             entity.Property(e => e.ClientId)
