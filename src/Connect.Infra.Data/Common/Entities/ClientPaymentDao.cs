@@ -20,7 +20,6 @@ public class ClientPaymentDao : BaseEntity
     
     [MaxLength(255)]
     public string? ChannelPartnerId { get; set; }
-    public ChannelPartnerDao? ChannelPartner { get; set; }
     
     public string? CustomChannelPartnerName { get; set; }
     
