@@ -61,10 +61,19 @@ export const updateClientProfile = async (
   phoneNumber: string
 ) => {
 
+  const client = await getClientFromToken(tokenId);
+
+  if (!client) {
+    throw new Error('Client not found');
+  }
+
   const payload: UpdateClientTokenRequest = {
     name,
     email,
-    phoneNumber
+    phoneNumber,
+    sellRecords: client.sellRecords,
+    buyRecords: client.buyRecords,
+    payment: client.payment
   };
 
   const response = await updateClientToken(tokenId, payload);
@@ -77,19 +86,43 @@ export const updatePropertyRecords = async (
     buyUnits: PropertyRecord[]
   ) => {
 
+    const client = await getClientFromToken(tokenId);
+
+    if (!client) {
+      throw new Error('Client not found');
+    }
+
     const response = await updateClientToken(tokenId, {
+      name: client.name,
+      email: client.email,
+      phoneNumber: client.phoneNumber,
       sellRecords: sellUnits,
-      buyRecords: buyUnits
+      buyRecords: buyUnits,
+      payment: client.payment
     });
     return response;
 };
 
 export const updatePayment = async (
   tokenId: number,
-  payment: ClientPayment
+  payment: ClientPayment,
+  sellRecords: PropertyRecord[],
+  buyRecords: PropertyRecord[]
 ) => {
+  const client = await getClientFromToken(tokenId);
+
+  if (!client) {
+    throw new Error('Client not found');
+  }
+
   const response = await updateClientToken(tokenId, {
-    payment : payment
+    name: client.name,
+    email: client.email,
+    phoneNumber: client.phoneNumber,
+    payment : payment,
+    sellRecords: sellRecords,
+    buyRecords: buyRecords
   });
+  
   return response;
 };
