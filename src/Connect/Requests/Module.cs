@@ -1,6 +1,7 @@
 using Connect.Requests.Approve;
 using Connect.Requests.Create;
 using Connect.Requests.Get.ByStatus;
+using Connect.Requests.Get.ByToken;
 using Connect.Requests.Reject;
 
 namespace Connect.Requests;
@@ -14,6 +15,7 @@ public static class Module
         endpoints.MapApproveRequests();
         
         endpoints.MapGetRequestsByStatus();
+        endpoints.MapGetRequestsByToken();
     }
 
     public static void ConfigureRequestsModule(this IServices services)
@@ -23,5 +25,6 @@ public static class Module
         services.ConfigureApproveRequests();
         
         services.ConfigureGetRequestsByStatus();
+        services.ConfigureGetRequestsByToken();
     }
 }
