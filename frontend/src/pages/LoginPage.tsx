@@ -5,20 +5,24 @@ import Button from '../components/Button';
 import { login } from '../core/services/LoginService';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { useConfig } from '../context/ConfigContext';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loginAs, setLoginAs] = useState('/');
   const navigate = useNavigate();
+  const { setConfig } = useConfig();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await login(email, password);
+      const result = await login(email, password);
+      setConfig(result.config);
       toast.success('Login successful!');
-      navigate('/');
+      navigate(loginAs);
     } catch (err: any) {
       toast.error('Cannot login, some issue occurred');
     } finally {
@@ -63,6 +67,21 @@ const LoginPage: React.FC = () => {
               autoComplete="current-password"
               required
             />
+          </div>
+          <div>
+            <label htmlFor="loginAs" className="block text-sm font-medium text-gray-700 mb-1">Login As</label>
+            <select
+              id="loginAs"
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              value={loginAs}
+              onChange={e => setLoginAs(e.target.value)}
+              required
+            >
+              <option value="/login">Select Counter</option>
+              <option value="/crm">Counter 1</option>
+              <option value="/transaction">Counter 2</option>
+              <option value="/admin">Admin</option>
+            </select>
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}

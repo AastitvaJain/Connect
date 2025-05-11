@@ -8,37 +8,93 @@ interface CostSheetProps {
   totalPaidAmount: number;
   totalPremium: number;
   numNewProperties: number;
+  discAdjPercents?: number[];
 }
 
-const CostSheet: React.FC<CostSheetProps> = ({ oldProperties, newProperty, paymentPlan, totalPaidAmount, totalPremium, numNewProperties }) => {
+const CostSheet: React.FC<CostSheetProps> = ({ oldProperties, newProperty, paymentPlan, totalPaidAmount, totalPremium, numNewProperties, discAdjPercents }) => {
   // Payment plan calculations
-  const bookingAmount = 500000;
-  // Distribute paid and premium equally among new properties
-  const perPropertyPaidAmount = numNewProperties > 0 ? totalPaidAmount / numNewProperties : 0;
-  const perPropertyPremium = numNewProperties > 0 ? totalPremium / numNewProperties : 0;
+  const bookingAmount = newProperty.bookingAmount;
+  // Use the full proportional values passed from parent
+  const perPropertyPaidAmount = totalPaidAmount;
+  const perPropertyPremium = totalPremium;
   const newUnitTCVActual = newProperty.superBuiltUpArea * newProperty.rate;
   const remainingAmount = newUnitTCVActual - bookingAmount;
 
   // Payment plan splits
   let planSplits: { label: string; percent: number; }[] = [];
-  if (paymentPlan === 'res1') {
+  if (Array.isArray(paymentPlan)) {
+    planSplits = paymentPlan;
+  } else if (paymentPlan === 'res1') {
     planSplits = [
-      { label: 'Within 30 Days of Booking (Less Earlier Paid)', percent: 30 },
-      { label: 'On Completion of Super Structure', percent: 30 },
-      { label: 'On Application of OC', percent: 30 },
-      { label: '2 Years From Application of OC', percent: 10 },
+      { label: 'Milestone 1', percent: 30 },
+      { label: 'Milestone 2', percent: 30 },
+      { label: 'Milestone 3', percent: 30 },
+      { label: 'Milestone 4', percent: 10 },
     ];
   } else if (paymentPlan === 'res2') {
     planSplits = [
-      { label: 'Within 30 Days of Booking (Less Earlier Paid)', percent: 10 },
-      { label: 'On Application of OC', percent: 90 },
+      { label: 'Milestone 1', percent: 10 },
+      { label: 'Milestone 2', percent: 90 },
     ];
   } else if (paymentPlan === 'comm') {
     planSplits = [
-      { label: 'Within 30 Days of Booking (Less Earlier Paid)', percent: 45 },
-      { label: 'On Application of OC', percent: 55 },
+      { label: 'Milestone 1', percent: 45 },
+      { label: 'Milestone 2', percent: 55 },
     ];
   }
+
+  // Debug logs for calculation
+  console.log('perPropertyPaidAmount:', perPropertyPaidAmount);
+  console.log('perPropertyPremium:', perPropertyPremium);
+  console.log('newUnitTCVActual:', newUnitTCVActual);
+  console.log('remainingAmount:', remainingAmount);
+  console.log('planSplits:', planSplits);
+
+  // FT adjustment: only in first milestone
+  const ftAdjs = planSplits.map((_, idx) => idx === 0 ? perPropertyPaidAmount : 0);
+  // Profit adjustment: distributed as before, or by custom discAdjPercents
+  const discAdjs = planSplits.map((split, idx) =>
+    discAdjPercents && discAdjPercents.length === planSplits.length
+      ? perPropertyPremium * (discAdjPercents[idx] / 100)
+      : perPropertyPremium * (split.percent / 100)
+  );
+  // Installments: distribute full TCV, deduct bookingAmount only from first milestone
+  const installmentsRaw = planSplits.map((split) => newUnitTCVActual * (split.percent / 100));
+  const installments = installmentsRaw.map((amt, idx) => idx === 0 ? amt - bookingAmount : amt);
+
+  console.log('ftAdjs:', ftAdjs);
+  console.log('discAdjs:', discAdjs);
+  console.log('installments:', installments);
+
+  // Initial net payables
+  let netPayables = installments.map((installment, idx) => installment - ftAdjs[idx] - discAdjs[idx]);
+  console.log('netPayables before carry logic:', [...netPayables]);
+
+  // Custom carry logic: move all negatives to the last milestone, then backward if needed
+  let carry = 0;
+  netPayables = netPayables.map((val, idx) => {
+    if (val < 0) {
+      carry += val; // val is negative
+      return 0;
+    }
+    return val;
+  });
+  // Add carry to the last milestone
+  netPayables[netPayables.length - 1] += carry;
+  // If last milestone is negative, carry backward
+  let i = netPayables.length - 1;
+  while (i >= 0 && netPayables[i] < 0) {
+    if (i === 0) {
+      netPayables[i] = 0;
+      break;
+    }
+    carry = netPayables[i];
+    netPayables[i] = 0;
+    netPayables[i - 1] += carry;
+    i--;
+  }
+
+  console.log('netPayables after carry logic:', [...netPayables]);
 
   // Calculate installment, FT adjustment, disc adjustment, net payable for each split
   let rows: { label: string; percent: number; installment: number; ftAdj: number; discAdj: number; netPayable: number }[] = [];
@@ -48,10 +104,10 @@ const CostSheet: React.FC<CostSheetProps> = ({ oldProperties, newProperty, payme
   let totalNetPayable = 0;
 
   planSplits.forEach((split, idx) => {
-    const installment = remainingAmount * (split.percent / 100);
-    const ftAdj = perPropertyPaidAmount * (split.percent / 100);
-    const discAdj = perPropertyPremium * (split.percent / 100);
-    const netPayable = installment - ftAdj - discAdj;
+    const installment = installments[idx];
+    const ftAdj = ftAdjs[idx];
+    const discAdj = discAdjs[idx];
+    const netPayable = netPayables[idx];
     totalInstallment += installment;
     totalFTAdj += ftAdj;
     totalDiscAdj += discAdj;
@@ -65,6 +121,11 @@ const CostSheet: React.FC<CostSheetProps> = ({ oldProperties, newProperty, payme
       netPayable,
     });
   });
+
+  console.log('rows (final milestone breakdown):', rows);
+
+  // Determine if property is a plot (case-insensitive)
+  const isPlot = newProperty.projectType?.toLowerCase().includes('plot');
 
   return (
     <div className="border border-blue-200 rounded-xl overflow-hidden shadow bg-white mb-8">
@@ -84,7 +145,7 @@ const CostSheet: React.FC<CostSheetProps> = ({ oldProperties, newProperty, payme
               <tr>
                 <th className="p-1 border text-left font-semibold">Particulars</th>
                 <th className="p-1 border text-left font-semibold">Payment %</th>
-                <th className="p-1 border text-left font-semibold">Total Payment (With Tax)</th>
+                <th className="p-1 border text-left font-semibold">Total Payment (Without Tax)</th>
                 {oldProperties.length > 0 && <th className="p-1 border text-left font-semibold">FT Adjustment</th>}
                 {oldProperties.length > 0 && <th className="p-1 border text-left font-semibold">Disc. Adjustment</th>}
                 <th className="p-1 border text-left font-semibold">Net Payable by Customer</th>
@@ -93,33 +154,33 @@ const CostSheet: React.FC<CostSheetProps> = ({ oldProperties, newProperty, payme
             </thead>
             <tbody className="bg-white divide-y divide-blue-100">
               <tr className="hover:bg-blue-50">
-                <td className="p-1 border font-semibold text-blue-800 bg-blue-50">Booking Amount</td>
+                <td className="p-1 border text-blue-800 bg-blue-50">Booking Amount</td>
                 <td className="p-1 border">-</td>
-                <td className="p-1 border">{bookingAmount.toLocaleString()}</td>
+                <td className="p-1 border">{bookingAmount.toLocaleString('en-IN')}</td>
                 {oldProperties.length > 0 && <td className="p-1 border">-</td>}
                 {oldProperties.length > 0 && <td className="p-1 border">-</td>}
-                <td className="p-1 border font-semibold text-blue-800">{bookingAmount.toLocaleString()}</td>
-                <td className="p-1 border">{(bookingAmount * 0.05).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td className="p-1 border font-semibold text-blue-800">{bookingAmount.toLocaleString('en-IN')}</td>
+                <td className="p-1 border">-</td>
               </tr>
               {rows.map((row, idx) => (
                 <tr key={idx} className={idx % 2 === 0 ? 'bg-blue-50 hover:bg-blue-100' : 'hover:bg-blue-50'}>
                   <td className="p-1 border font-medium text-blue-900">{row.label}</td>
                   <td className="p-1 border">{row.percent}%</td>
-                  <td className="p-1 border">{Math.round(row.installment).toLocaleString()}</td>
-                  {oldProperties.length > 0 && <td className="p-1 border text-green-700">{Math.round(row.ftAdj).toLocaleString()}</td>}
-                  {oldProperties.length > 0 && <td className="p-1 border text-yellow-700">{Math.round(row.discAdj).toLocaleString()}</td>}
-                  <td className="p-1 border font-semibold text-blue-900">{Math.round(row.netPayable).toLocaleString()}</td>
-                  <td className="p-1 border">{(Math.round(row.installment) * 0.05).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                  <td className="p-1 border">{Math.round(row.installment).toLocaleString('en-IN')}</td>
+                  {oldProperties.length > 0 && <td className="p-1 border text-green-700">{Math.round(row.ftAdj).toLocaleString('en-IN')}</td>}
+                  {oldProperties.length > 0 && <td className="p-1 border text-yellow-700">{Math.round(row.discAdj).toLocaleString('en-IN')}</td>}
+                  <td className="p-1 border font-semibold text-blue-900">{Math.round(row.netPayable).toLocaleString('en-IN')}</td>
+                  <td className="p-1 border">{isPlot ? 0 : Math.round(row.netPayable * 0.05).toLocaleString('en-IN')}</td>
                 </tr>
               ))}
               <tr className="font-bold bg-blue-100 border-t border-blue-300">
                 <td className="p-1 border">Total</td>
                 <td className="p-1 border">100%</td>
-                <td className="p-1 border">{Math.round(newUnitTCVActual).toLocaleString()}</td>
-                {oldProperties.length > 0 && <td className="p-1 border">{Math.round(perPropertyPaidAmount).toLocaleString()}</td>}
-                {oldProperties.length > 0 && <td className="p-1 border">{Math.round(perPropertyPremium).toLocaleString()}</td>}
-                <td className="p-1 border text-blue-900">{Math.round(bookingAmount + totalNetPayable).toLocaleString()}</td>
-                <td className="p-1 border">{(Math.round(newUnitTCVActual) * 0.05).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td className="p-1 border">{Math.round(newUnitTCVActual).toLocaleString('en-IN')}</td>
+                {oldProperties.length > 0 && <td className="p-1 border">{Math.round(perPropertyPaidAmount).toLocaleString('en-IN')}</td>}
+                {oldProperties.length > 0 && <td className="p-1 border">{Math.round(perPropertyPremium).toLocaleString('en-IN')}</td>}
+                <td className="p-1 border text-blue-900">{Math.round(bookingAmount + totalNetPayable).toLocaleString('en-IN')}</td>
+                <td className="p-1 border">{isPlot ? 0 : Math.round((bookingAmount + totalNetPayable) * 0.05).toLocaleString('en-IN')}</td>
               </tr>
             </tbody>
           </table>

@@ -14,6 +14,7 @@ export interface Property {
   sellAtPremiumPrice?: number;
   netProfitInCr?: number;
   netReceivedInCr?: number;
+  bookingAmount: number;
 }
 
 export const propertyData: Property[] = [
@@ -32,7 +33,8 @@ export const propertyData: Property[] = [
     totalConsiderationInCr: 2.5591472,
     sellAtPremiumPrice: 14000,
     netProfitInCr: -0.8188212,
-    netReceivedInCr: 2.5591472
+    netReceivedInCr: 2.5591472,
+    bookingAmount: 0
   },
   {
     id: 2,
@@ -49,7 +51,8 @@ export const propertyData: Property[] = [
     totalConsiderationInCr: 1.6381035,
     sellAtPremiumPrice: 14000,
     netProfitInCr: 0.1450205,
-    netReceivedInCr: 1.6381035
+    netReceivedInCr: 1.6381035,
+    bookingAmount: 0
   },
   {
     id: 3,
@@ -66,7 +69,8 @@ export const propertyData: Property[] = [
     totalConsiderationInCr: 1.3370385,
     sellAtPremiumPrice: 16000,
     netProfitInCr: -0.0553745,
-    netReceivedInCr: 1.3370385
+    netReceivedInCr: 1.3370385,
+    bookingAmount: 0
   },
   {
     id: 4,
@@ -83,7 +87,8 @@ export const propertyData: Property[] = [
     totalConsiderationInCr: 1.5551393,
     sellAtPremiumPrice: 16000,
     netProfitInCr: -0.2734753,
-    netReceivedInCr: 1.5551393
+    netReceivedInCr: 1.5551393,
+    bookingAmount: 0
   },
   {
     id: 5,
@@ -100,7 +105,8 @@ export const propertyData: Property[] = [
     totalConsiderationInCr: 1.0014367,
     sellAtPremiumPrice: 16000,
     netProfitInCr: 0.2802273,
-    netReceivedInCr: 1.0014367
+    netReceivedInCr: 1.0014367,
+    bookingAmount: 0
   },
   {
     id: 6,
@@ -117,7 +123,8 @@ export const propertyData: Property[] = [
     totalConsiderationInCr: 1.0014367,
     sellAtPremiumPrice: 16000,
     netProfitInCr: 0.2802273,
-    netReceivedInCr: 1.0014367
+    netReceivedInCr: 1.0014367,
+    bookingAmount: 0
   },
   {
     id: 7,
@@ -134,7 +141,8 @@ export const propertyData: Property[] = [
     totalConsiderationInCr: 4.3815504,
     sellAtPremiumPrice: 40000,
     netProfitInCr: 3.6478896,
-    netReceivedInCr: 4.3815504
+    netReceivedInCr: 4.3815504,
+    bookingAmount: 0
   },
   {
     id: 8,
@@ -151,7 +159,8 @@ export const propertyData: Property[] = [
     totalConsiderationInCr: 1.6347213,
     sellAtPremiumPrice: 30000,
     netProfitInCr: 1.5586587,
-    netReceivedInCr: 1.6347213
+    netReceivedInCr: 1.6347213,
+    bookingAmount: 0
   },
   {
     id: 9,
@@ -168,7 +177,8 @@ export const propertyData: Property[] = [
     totalConsiderationInCr: 6.3915865,
     sellAtPremiumPrice: 55000,
     netProfitInCr: 11.9395285,
-    netReceivedInCr: 6.3915865
+    netReceivedInCr: 6.3915865,
+    bookingAmount: 0
   },
   {
     id: 10,
@@ -185,6 +195,7 @@ export const propertyData: Property[] = [
     totalConsiderationInCr: 4.7505,
     sellAtPremiumPrice: 9000,
     netProfitInCr: 9.501,
-    netReceivedInCr: 4.727995
+    netReceivedInCr: 4.727995,
+    bookingAmount: 0
   },
 ];

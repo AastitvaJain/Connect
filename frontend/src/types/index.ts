@@ -1,5 +1,5 @@
 export interface Property {
-  id: number;
+  id: string | number;
   srNo: number | string;
   projectName: string;
   projectType: string;
@@ -14,6 +14,16 @@ export interface Property {
   sellAtPremiumPrice?: number;
   netProfitInCr?: number;
   netReceivedInCr?: number;
+  bookingAmount: number;
+  newOffer?: number;
+  soldOffer?: number;
 }
 
-export type PaymentPlan = 'standard' | 'flexi' | 'subvention' | 'res1' | 'res2' | 'comm';
+export type PaymentPlan =
+  | 'standard'
+  | 'flexi'
+  | 'subvention'
+  | 'res1'
+  | 'res2'
+  | 'comm'
+  | { label: string; percent: number }[];
