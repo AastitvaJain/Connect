@@ -314,7 +314,7 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
 
             entity.Property(e => e.PaymentPlan)
                 .HasColumnName("payment_plan")
-                .HasMaxLength(100);
+                .HasMaxLength(5000);
             
             entity.Property(e => e.SellerId)
                 .HasColumnName("seller_id");

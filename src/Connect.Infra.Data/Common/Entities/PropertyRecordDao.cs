@@ -14,7 +14,7 @@ public class PropertyRecordDao
     
     public float? ApprovedRate { get; set; }
     
-    [MaxLength(100)]
+    [MaxLength(5000)]
     public string? PaymentPlan { get; set; }
 
     // Composite FK to ClientDao (seller)
