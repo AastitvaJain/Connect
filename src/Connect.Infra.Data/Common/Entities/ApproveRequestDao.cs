@@ -24,6 +24,9 @@ public class ApproveRequestDao : BaseEntity
     public required List<ApprovalCostSheetDao> CostSheets { get; set; } = new();
 
     public bool IsApplied { get; set; }
+    
+    [MaxLength(1000)]
+    public string? Note { get; set; }
 
     public long? CreatedBy { get; set; }
 

@@ -500,6 +500,10 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.Property(e => e.IsApplied)
                 .HasColumnName("is_applied");
 
+            entity.Property(e => e.Note)
+                .HasColumnName("note")
+                .HasMaxLength(1000);
+
             entity.Property(e => e.CreatedBy)
                 .HasColumnName("created_by")
                 .IsRequired();
