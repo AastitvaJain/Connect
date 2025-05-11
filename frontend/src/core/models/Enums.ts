@@ -7,4 +7,10 @@ export enum UserGroup {
     Active = 'Active',
     Locked = 'Locked'
   }
+
+  export enum ApprovalRequestStatus {
+    Pending = 'Pending',
+    Approved = 'Approved',
+    Rejected = 'Rejected'
+  }
   

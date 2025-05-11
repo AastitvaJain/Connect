@@ -19,7 +19,7 @@ internal sealed class Controller(IHandler handler, ITimer timer) : IController
             
             await (result switch
             {
-                CreatedResult data => context.Ok(data),
+                CreatedResult data => context.Ok(data.RequestId),
                 CouldNotCreateResult => context.Status(Status500InternalServerError),
                 NotFoundResult => context.Status(Status404NotFound),
                 AlreadyCreatedResult => context.Status(Status409Conflict),
