@@ -20,6 +20,8 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
     public DbSet<ProjectOfferDao> ProjectOffer { get; set; }
     
     public DbSet<NewLeadDao> NewLeads { get; set; }
+
+    public DbSet<ApproveRequestDao> ApproveRequests { get; set; }
     
     public IQueryable<T> ReadOnlySet<T>() where T : class =>
         Set<T>().AsNoTracking();
@@ -244,6 +246,10 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             
             entity.Property(e => e.UpdatedBy)
                 .HasColumnName("updated_by");
+            
+            entity.Property(e => e.IsSubmitted)
+                .HasColumnName("is_submitted")
+                .IsRequired();
 
             // One-to-many SellRecords
             entity.HasMany(e => e.SellRecords)
@@ -272,6 +278,11 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .WithMany()
                 .HasForeignKey(e => e.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasMany(e => e.ApproveRequests)
+                .WithOne(e => e.Client)
+                .HasForeignKey(e => new { e.ClientId, e.ClientSequence })
+                .OnDelete(DeleteBehavior.Cascade);
         });
         
         modelBuilder.Entity<PropertyRecordDao>(entity =>
@@ -463,6 +474,52 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasMany(e => e.SellRecords)
                 .WithOne(e => e.NewLead)
                 .HasForeignKey(e => e.NewLeadId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+        
+        modelBuilder.Entity<ApproveRequestDao>(entity =>
+        {
+            entity.ToTable("approve_request");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("Id")
+                .UseIdentityAlwaysColumn() // PostgresSQL
+                .HasIdentityOptions(startValue:100000, maxValue:999999);
+
+            entity.Property(e => e.ClientId)
+                .HasColumnName("client_id")
+                .IsRequired();
+
+            entity.Property(e => e.ClientSequence)
+                .HasColumnName("client_sequence")
+                .IsRequired();
+
+            entity.Property(e => e.Status)
+                .HasColumnName("status")
+                .IsRequired();
+
+            entity.Property(e => e.CreatedBy)
+                .HasColumnName("created_by")
+                .IsRequired();
+
+            entity.Property(e => e.UpdatedBy)
+                .HasColumnName("updated_by");
+
+            entity.HasOne(e => e.CreatedByAccount)
+                .WithMany()
+                .HasForeignKey(e => e.CreatedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.UpdatedByAccount)
+                .WithMany()
+                .HasForeignKey(e => e.UpdatedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Client)
+                .WithMany(c => c.ApproveRequests)
+                .HasForeignKey(e => new { e.ClientId, e.ClientSequence })
                 .OnDelete(DeleteBehavior.Restrict);
         });
         

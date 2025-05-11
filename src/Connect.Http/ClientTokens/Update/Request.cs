@@ -6,4 +6,5 @@ public sealed record Request(
     string? PhoneNumber = null,
     List<PropertyRecord>? SellRecords = null,
     List<PropertyRecord>? BuyRecords = null,
-    ClientPayment? Payment = null);
+    ClientPayment? Payment = null,
+    bool? IsSubmitted = false);

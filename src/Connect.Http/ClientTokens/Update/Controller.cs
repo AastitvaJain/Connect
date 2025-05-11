@@ -19,6 +19,7 @@ internal sealed class Controller(IHandler handler, ITimer timer) : IController
                 UpdatedResult data => context.Ok(data),
                 CouldNotUpdateResult => context.Status(Status500InternalServerError),
                 NotFoundResult => context.Status(Status404NotFound),
+                AlreadySubmittedResult => context.Status(Status409Conflict),
                 _ => throw new NotImplementedException()
             });
         }
@@ -66,6 +67,7 @@ internal sealed class Controller(IHandler handler, ITimer timer) : IController
             string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber,
             request.SellRecords is null || request.SellRecords.Count == 0 ? null : request.SellRecords,
             request.BuyRecords is null || request.BuyRecords.Count == 0 ? null : request.BuyRecords,
-            request.Payment);
+            request.Payment,
+            request.IsSubmitted ?? false);
     }
 }

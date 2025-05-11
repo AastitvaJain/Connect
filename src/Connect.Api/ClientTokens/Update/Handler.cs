@@ -11,13 +11,18 @@ internal sealed class Handler(IStore store) : IHandler
     {
         (UserId userId, ClientToken token,  DateTime currentTime, Name? name,
             EmailId? email, string? phoneNumber, List<PropertyRecord>? sellRecords
-            , List<PropertyRecord>? buyRecords, ClientPayment? payment) = command;
+            , List<PropertyRecord>? buyRecords, ClientPayment? payment, bool isSubmitted) = command;
 
         Client? client = await store.Get(token, cancellationToken);
         
         if (client is null)
         {
             return new NotFoundResult();
+        }
+
+        if (client.IsSubmitted)
+        {
+            return new AlreadySubmittedResult();
         }
         
         if (sellRecords is not null && !await store.CheckSellRecords(sellRecords, cancellationToken))
@@ -37,7 +42,8 @@ internal sealed class Handler(IStore store) : IHandler
             phoneNumber,
             sellRecords,
             buyRecords,
-            payment);
+            payment,
+            isSubmitted);
 
         if (!await store.TryUpdate(updatedClient, userId, currentTime, cancellationToken)) 
             return new CouldNotUpdateResult();

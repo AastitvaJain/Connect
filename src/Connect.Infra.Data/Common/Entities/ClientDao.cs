@@ -22,6 +22,11 @@ public class ClientDao : BaseEntity
     
     public ClientPaymentDao? ClientPayment { get; set; } = null;
     
+    public List<ApproveRequestDao>? ApproveRequests { get; set; } = null;
+    
+    [Required]
+    public required bool IsSubmitted { get; set; }
+    
     public long? CreatedBy { get; set; } 
     
     public AccountDao? CreatedByAccount { get; set; }

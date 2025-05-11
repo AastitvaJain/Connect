@@ -35,7 +35,8 @@ internal sealed class Store(ConnectDbContext context) : ClientTokenStore(context
                 RequestedRate = x.RequestedRate,
                 ApprovedRate = x.ApprovedRate,
                 PaymentPlan = x.PaymentPlan
-            }).ToList()
+            }).ToList(),
+            IsSubmitted = false
         };
 
         // 2. Add to context

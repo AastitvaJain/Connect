@@ -9,4 +9,5 @@ public sealed record Command(
     string? PhoneNumber,
     List<PropertyRecord>? SellRecords,
     List<PropertyRecord>? BuyRecords,
-    ClientPayment? Payment);
+    ClientPayment? Payment,
+    bool IsSubmitted);

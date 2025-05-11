@@ -24,6 +24,7 @@ internal sealed class Store(ConnectDbContext context) : ClientTokenStore(context
         dao.Name = client.Name;
         dao.EmailId = client.EmailId;
         dao.PhoneNo = client.PhoneNo;
+        dao.IsSubmitted = client.IsSubmitted;
 
         if (client.Payment is not null)
         {

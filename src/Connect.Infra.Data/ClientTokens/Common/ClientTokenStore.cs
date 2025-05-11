@@ -28,7 +28,8 @@ internal class ClientTokenStore(ConnectDbContext context)
                 dao.ClientPayment.PaymentId,
                 dao.ClientPayment.ChannelPartnerId,
                 dao.ClientPayment.CustomChannelPartnerName,
-                dao.ClientPayment.CustomChannelPartnerNumber) : null);
+                dao.ClientPayment.CustomChannelPartnerNumber) : null,
+            dao.IsSubmitted);
     }
     
     public async Task<bool> CheckSellRecords(List<PropertyRecord> sellRecords, CancellationToken cancellationToken)

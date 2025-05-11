@@ -7,7 +7,8 @@ public sealed record Client(
     string? PhoneNo,
     List<PropertyRecord>? SellRecords,
     List<PropertyRecord>? BuyRecords,
-    ClientPayment? Payment)
+    ClientPayment? Payment,
+    bool IsSubmitted)
 {
     public static Client Create(
         ClientToken token,
@@ -16,6 +17,6 @@ public sealed record Client(
         string? phoneNo,
         List<PropertyRecord>? sellRecords)
     {
-        return new Client(token, name, emailId, phoneNo, sellRecords, null, null);
+        return new Client(token, name, emailId, phoneNo, sellRecords, null, null, false);
     }
 }
