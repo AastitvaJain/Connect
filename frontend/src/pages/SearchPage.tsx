@@ -154,11 +154,36 @@ const SearchPage: React.FC = () => {
     }
   };
 
+  function isValidSearchCombination() {
+    const hasProject = !!projectName;
+    const hasUnit = !!unitNo;
+    const hasName = !!customerName;
+    // Only Project Name (no unit, no name) is NOT allowed
+    if (hasProject && !hasUnit && !hasName) return false;
+    // Only Customer Name
+    if (!hasProject && !hasUnit && hasName) return true;
+    // Only Unit No
+    if (!hasProject && hasUnit && !hasName) return true;
+    // Project Name + Unit No (no name)
+    if (hasProject && hasUnit && !hasName) return true;
+    // Project Name + Customer Name (no unit)
+    if (hasProject && !hasUnit && hasName) return true;
+    // All three fields
+    if (hasProject && hasUnit && hasName) return true;
+    // Any other combination is not allowed
+    return false;
+  }
+
   // TODO: Replace with service call for project names if available
 
   return (
     <div className="container mx-auto p-4 max-w-6xl">
-      <h1 className="text-2xl font-semibold mb-6 text-gray-800">Customer details</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold text-gray-800">Customer details</h1>
+        <Button onClick={() => navigate('/transaction')} className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded shadow">
+          Go to Counter 2
+        </Button>
+      </div>
       
       <form onSubmit={handleFormSubmit} className="bg-white p-6 rounded-lg shadow-sm mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -225,7 +250,17 @@ const SearchPage: React.FC = () => {
         </div>
         
         <div className="mt-6 flex gap-4">
-          <Button type="submit" className="flex-1">Search</Button>
+          <span
+            className="flex-1"
+          >
+            <Button
+              type="submit"
+              className={`w-full ${!isValidSearchCombination() ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : ''}`}
+              disabled={!isValidSearchCombination()}
+            >
+              Search
+            </Button>
+          </span>
           <Button
             type="button"
             className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800"
@@ -323,8 +358,8 @@ const SearchPage: React.FC = () => {
                       <td className="p-1 border align-middle">{property.projectName}</td>
                       <td className="p-1 border align-middle">{property.unitNo}</td>
                       <td className="p-1 border align-middle">{property.customerName}</td>
-                      <td className="p-1 border align-middle">{property.superBuiltUpArea}</td>
-                      <td className="p-1 border align-middle">{property.rate?.toLocaleString()}</td>
+                      <td className="p-1 border align-middle">{property.superBuiltUpArea !== undefined && property.superBuiltUpArea !== null ? Math.round(property.superBuiltUpArea).toLocaleString() : '-'}</td>
+                      <td className="p-1 border align-middle">{property.rate !== undefined && property.rate !== null ? Math.round(property.rate).toLocaleString() : '-'}</td>
                       <td className="p-1 border align-middle">{property.totalConsiderationInCr?.toFixed(2) ?? '-'}</td>
                       <td className="p-1 border align-middle">{property.sellAtPremiumPrice?.toLocaleString() ?? '-'}</td>
                       <td className="p-1 border align-middle">{property.netProfitInCr !== undefined && property.netProfitInCr !== null ? property.netProfitInCr.toFixed(2) : '-'}</td>
@@ -396,8 +431,8 @@ const SearchPage: React.FC = () => {
                     <td className="p-1 border align-middle">{property.projectName}</td>
                     <td className="p-1 border align-middle">{property.unitNo}</td>
                     <td className="p-1 border align-middle">{property.customerName}</td>
-                    <td className="p-1 border align-middle">{property.superBuiltUpArea}</td>
-                    <td className="p-1 border align-middle">{property.rate?.toLocaleString()}</td>
+                    <td className="p-1 border align-middle">{property.superBuiltUpArea !== undefined && property.superBuiltUpArea !== null ? Math.round(property.superBuiltUpArea).toLocaleString() : '-'}</td>
+                    <td className="p-1 border align-middle">{property.rate !== undefined && property.rate !== null ? Math.round(property.rate).toLocaleString() : '-'}</td>
                     <td className="p-1 border align-middle">{property.totalConsiderationInCr?.toFixed(2) ?? '-'}</td>
                     <td className="p-1 border align-middle">{property.sellAtPremiumPrice?.toLocaleString() ?? '-'}</td>
                     <td className="p-1 border align-middle">{property.netProfitInCr !== undefined && property.netProfitInCr !== null ? property.netProfitInCr.toFixed(2) : '-'}</td>

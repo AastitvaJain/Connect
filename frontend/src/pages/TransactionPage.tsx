@@ -17,6 +17,7 @@ import AutocompleteDropdown from '../components/AutocompleteDropdown';
 import PrintQuoteDetails from '../components/PrintQuoteDetails';
 import { getNewProjectNamesApi } from '../core/api/configApi';
 import Modal from '../components/Modal';
+import { useNavigate } from 'react-router-dom';
 // Removed the import of 'react-select' as it causes a lint error and is not used in the code
 
 const TransactionPage: React.FC = () => {
@@ -415,6 +416,14 @@ const TransactionPage: React.FC = () => {
   const handlePaymentPlanChange = (propertyId: string, value: string) => {
     setIsApprovalSent(false);
     let plan: { label: string; percent: number }[] = [];
+    // If switching away from custom, clear discAdjByPropertyId for this property
+    setDiscAdjByPropertyId(prev => {
+      const copy = { ...prev };
+      if (value !== 'custom' && copy[propertyId]) {
+        delete copy[propertyId];
+      }
+      return copy;
+    });
     if (value === 'custom') {
       setCustomPlanPropertyId(propertyId);
       setCustomMilestones([{ label: '', percent: 0 }]);
@@ -439,7 +448,8 @@ const TransactionPage: React.FC = () => {
       ];
     }
     setPropertyPaymentPlans((prev) => ({ ...prev, [propertyId]: value }));
-    if (plan.length > 0) openDiscAdjModal(propertyId, plan);
+    // Only open Disc. Adj. modal for custom plan
+    // (for default plans, do not open the modal)
   };
 
   const handleCustomMilestoneChange = (idx: number, field: 'label' | 'percent', value: string) => {
@@ -567,22 +577,29 @@ const TransactionPage: React.FC = () => {
     Object.keys(editedNewRates).some(id => Number(editedNewRates[id]) !== Number(newProperties.find(p => String(p.id) === id)?.rate)) ||
     newProperties.some(p => propertyPaymentPlans[p.id] === 'custom');
 
+  const navigate = useNavigate();
+
   return (
     <div className="container mx-auto p-4 max-w-6xl">
-      {/* Tabs */}
-      <div className="flex gap-4 mb-8">
-        <button
-          className={`px-6 py-2 rounded-t font-bold text-lg border-b-4 ${activeTab === 'existing' ? 'border-yellow-400 bg-yellow-100 text-yellow-900' : 'border-transparent bg-gray-100 text-gray-500'}`}
-          onClick={() => setActiveTab('existing')}
-        >
-          Existing Customer
-        </button>
-        <button
-          className={`px-6 py-2 rounded-t font-bold text-lg border-b-4 ${activeTab === 'new' ? 'border-yellow-400 bg-yellow-100 text-yellow-900' : 'border-transparent bg-gray-100 text-gray-500'}`}
-          onClick={() => setActiveTab('new')}
-        >
-          New Customer
-        </button>
+      {/* Go to CRM Button */}
+      <div className="flex gap-4 mb-8 items-center justify-between">
+        <div className="flex gap-4">
+          <button
+            className={`px-6 py-2 rounded-t font-bold text-lg border-b-4 ${activeTab === 'existing' ? 'border-yellow-400 bg-yellow-100 text-yellow-900' : 'border-transparent bg-gray-100 text-gray-500'}`}
+            onClick={() => setActiveTab('existing')}
+          >
+            Existing Customer
+          </button>
+          <button
+            className={`px-6 py-2 rounded-t font-bold text-lg border-b-4 ${activeTab === 'new' ? 'border-yellow-400 bg-yellow-100 text-yellow-900' : 'border-transparent bg-gray-100 text-gray-500'}`}
+            onClick={() => setActiveTab('new')}
+          >
+            New Customer
+          </button>
+        </div>
+        <Button onClick={() => navigate('/crm')} className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded shadow">
+          Go to Counter 1
+        </Button>
       </div>
       {/* Existing Customer Flow */}
       {activeTab === 'existing' && (
@@ -1246,7 +1263,7 @@ const TransactionPage: React.FC = () => {
                   <div>
                     <Button
                       onClick={handlePrintQuoteOnly}
-                      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded shadow"
+                      className={`font-semibold px-6 py-2 rounded shadow ${hasApprovalChanges && !isApprovalSent ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white'}`}
                       disabled={hasApprovalChanges && !isApprovalSent}
                     >
                       Print Quote Only
@@ -1255,7 +1272,7 @@ const TransactionPage: React.FC = () => {
                 </div>
                 {/* Banner if not approved */}
                 {!isApprovalSent && hasApprovalChanges && (
-                  <div className="mb-4 text-yellow-700 bg-yellow-100 border border-yellow-300 rounded p-2 text-center">
+                  <div className="mb-4 mt-2 text-yellow-700 bg-yellow-100 border border-yellow-300 rounded p-2 text-center">
                     You must send your changes for approval before printing the quote.
                   </div>
                 )}
@@ -1299,7 +1316,7 @@ const TransactionPage: React.FC = () => {
                   <option value="cheque">Cheque</option>
                   <option value="netbanking">Net Banking</option>
                   <option value="upi">UPI</option>
-                  <option value="cash">Cash</option>
+                  <option value="others">Others</option>
                 </select>
               </div>
               <div className="md:col-span-2">

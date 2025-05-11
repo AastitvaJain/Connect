@@ -62,6 +62,10 @@ const NewCustomerTransactionPage: React.FC = () => {
   const [customPlanPropertyId, setCustomPlanPropertyId] = useState<string | null>(null);
   const [showApprovalReview, setShowApprovalReview] = useState(false);
   const [approvalPayload, setApprovalPayload] = useState<any>(null);
+  const [discAdjByPropertyId, setDiscAdjByPropertyId] = useState<{ [propertyId: string]: number[] }>({});
+  const [showDiscAdjModal, setShowDiscAdjModal] = useState(false);
+  const [discAdjMilestones, setDiscAdjMilestones] = useState<{ label: string; paymentPercent: number; discAdjPercent: number }[]>([]);
+  const [discAdjPropertyId, setDiscAdjPropertyId] = useState<string | null>(null);
 
   const unitOptions = projectSearch ? newPropertyData.filter(p => p.projectName === projectSearch).map(p => p.unitNo) : [];
 
@@ -228,15 +232,36 @@ const NewCustomerTransactionPage: React.FC = () => {
   const customPlanWarning = customTotalPercent !== 100;
   const canSubmitCustomPlan = customMilestones.length > 0 && !customPlanWarning && customMilestones.every(m => m.label && m.percent > 0);
 
+  // Helper to open Disc. Adj. modal for a property and plan
+  const openDiscAdjModal = (propertyId: string, plan: { label: string; percent: number }[]) => {
+    setDiscAdjPropertyId(propertyId);
+    setDiscAdjMilestones(plan.map((m, i) => ({
+      label: m.label,
+      paymentPercent: m.percent,
+      discAdjPercent: m.percent,
+    })));
+    setShowDiscAdjModal(true);
+  };
+
   // Handler for payment plan change
   const handlePaymentPlanChange = (propertyId: string, value: string) => {
+    // If switching away from custom, clear discAdjByPropertyId for this property
+    setDiscAdjByPropertyId(prev => {
+      const copy = { ...prev };
+      if (value !== 'custom' && copy[propertyId]) {
+        delete copy[propertyId];
+      }
+      return copy;
+    });
     if (value === 'custom') {
       setCustomPlanPropertyId(propertyId);
       setCustomMilestones([{ label: '', percent: 0 }]);
       setShowCustomPlanModal(true);
-    } else {
-      setPropertyPaymentPlans((prev) => ({ ...prev, [propertyId]: value }));
+      return;
     }
+    setPropertyPaymentPlans((prev) => ({ ...prev, [propertyId]: value }));
+    // Only open Disc. Adj. modal for custom plan
+    // (for default plans, do not open the modal)
   };
 
   // Handler for custom milestone change
@@ -934,6 +959,17 @@ const NewCustomerTransactionPage: React.FC = () => {
           </div>
         </div>
       </Modal>
+      {/* Add this hidden print area for PrintQuoteDetails */}
+      <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
+        <PrintQuoteDetails
+          ref={printRef}
+          customerNames={getCustomerNames()}
+          token={tokenNumber || ''}
+          costSheetData={costSheetData}
+          oldProperties={[]}
+          newProperties={selectedProperties}
+        />
+      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchProjectOffers, saveProjectOffers } from '../core/services/AdminService';
 import type { ProjectOffer } from '../core/models/ProjectOffers';
+import ApprovalRequestsPage from './ApprovalRequestsPage';
 
 const AdminPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'approval' | 'offers'>('approval');
@@ -63,10 +64,7 @@ const AdminPage: React.FC = () => {
       </div>
       <div className="bg-white rounded-lg shadow p-6 min-h-[300px]">
         {activeTab === 'approval' && (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Approval Requests</h2>
-            <div className="text-gray-500">(Placeholder for approval requests list and actions)</div>
-          </div>
+          <ApprovalRequestsPage />
         )}
         {activeTab === 'offers' && (
           <div>

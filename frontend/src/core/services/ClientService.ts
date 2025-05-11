@@ -3,6 +3,7 @@ import type { SoldInventoryDto } from '../models/InventoryDto';
 import type { CreateClientTokenRequest, UpdateClientTokenRequest } from '../models/requests/ClientRequest';
 import type { PropertyRecord, ClientPayment } from '../models/ClientDto';
 
+export { updateClientToken };
 
 export const generateTokenForExistingCustomer = async (
   soldUnits: SoldInventoryDto[]

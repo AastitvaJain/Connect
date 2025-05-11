@@ -11,6 +11,16 @@ interface CostSheetProps {
   discAdjPercents?: number[];
 }
 
+// Add GST rate function
+function getGSTRate(projectType: string): number {
+  if (!projectType) return 0;
+  const type = projectType.toLowerCase();
+  if (type.includes('plot')) return 0;
+  if (type.includes('comm')) return 0.12;
+  // Default to residential if not plot or commercial
+  return 0.05;
+}
+
 const CostSheet: React.FC<CostSheetProps> = ({ oldProperties, newProperty, paymentPlan, totalPaidAmount, totalPremium, numNewProperties, discAdjPercents }) => {
   // Payment plan calculations
   const bookingAmount = newProperty.bookingAmount;
@@ -127,6 +137,11 @@ const CostSheet: React.FC<CostSheetProps> = ({ oldProperties, newProperty, payme
   // Determine if property is a plot (case-insensitive)
   const isPlot = newProperty.projectType?.toLowerCase().includes('plot');
 
+  // Determine GST rate
+  const gstRate = getGSTRate(newProperty.projectType || '');
+  // Calculate GST for booking amount
+  const bookingGST = bookingAmount * gstRate;
+
   return (
     <div className="border border-blue-200 rounded-xl overflow-hidden shadow bg-white mb-8">
       <div className="bg-blue-50 p-2 text-blue-900 text-base font-bold tracking-wide border-b border-blue-200 text-left">
@@ -149,7 +164,7 @@ const CostSheet: React.FC<CostSheetProps> = ({ oldProperties, newProperty, payme
                 {oldProperties.length > 0 && <th className="p-1 border text-left font-semibold">FT Adjustment</th>}
                 {oldProperties.length > 0 && <th className="p-1 border text-left font-semibold">Disc. Adjustment</th>}
                 <th className="p-1 border text-left font-semibold">Net Payable by Customer</th>
-                <th className="p-1 border text-left font-semibold">Tax payable @5%</th>
+                <th className="p-1 border text-left font-semibold">GST payable @{gstRate * 100}%</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-blue-100">
@@ -170,7 +185,7 @@ const CostSheet: React.FC<CostSheetProps> = ({ oldProperties, newProperty, payme
                   {oldProperties.length > 0 && <td className="p-1 border text-green-700">{Math.round(row.ftAdj).toLocaleString('en-IN')}</td>}
                   {oldProperties.length > 0 && <td className="p-1 border text-yellow-700">{Math.round(row.discAdj).toLocaleString('en-IN')}</td>}
                   <td className="p-1 border font-semibold text-blue-900">{Math.round(row.netPayable).toLocaleString('en-IN')}</td>
-                  <td className="p-1 border">{isPlot ? 0 : Math.round(row.netPayable * 0.05).toLocaleString('en-IN')}</td>
+                  <td className="p-1 border">{idx === 0 ? Math.round(row.installment * gstRate + bookingGST).toLocaleString('en-IN') : Math.round(row.installment * gstRate).toLocaleString('en-IN')}</td>
                 </tr>
               ))}
               <tr className="font-bold bg-blue-100 border-t border-blue-300">
@@ -180,7 +195,7 @@ const CostSheet: React.FC<CostSheetProps> = ({ oldProperties, newProperty, payme
                 {oldProperties.length > 0 && <td className="p-1 border">{Math.round(perPropertyPaidAmount).toLocaleString('en-IN')}</td>}
                 {oldProperties.length > 0 && <td className="p-1 border">{Math.round(perPropertyPremium).toLocaleString('en-IN')}</td>}
                 <td className="p-1 border text-blue-900">{Math.round(bookingAmount + totalNetPayable).toLocaleString('en-IN')}</td>
-                <td className="p-1 border">{isPlot ? 0 : Math.round((bookingAmount + totalNetPayable) * 0.05).toLocaleString('en-IN')}</td>
+                <td className="p-1 border">{Math.round((totalInstallment * gstRate) + bookingGST).toLocaleString('en-IN')}</td>
               </tr>
             </tbody>
           </table>
