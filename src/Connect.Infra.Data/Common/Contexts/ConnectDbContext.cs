@@ -19,6 +19,8 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
     
     public DbSet<ProjectOfferDao> ProjectOffer { get; set; }
     
+    public DbSet<NewLeadDao> NewLeads { get; set; }
+    
     public IQueryable<T> ReadOnlySet<T>() where T : class =>
         Set<T>().AsNoTracking();
     
@@ -314,6 +316,9 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             
             entity.Property(e => e.BuyerSequence)
                 .HasColumnName("buyer_sequence");
+            
+            entity.Property(e => e.NewLeadId)
+                .HasColumnName("new_lead_id");
 
             // Seller (one-to-many)
             entity.HasOne(e => e.Seller)
@@ -325,6 +330,11 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasOne(e => e.Buyer)
                 .WithMany(c => c.BuyRecords)
                 .HasForeignKey(e => new { e.BuyerId, e.BuyerSequence })
+                .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.HasOne(e => e.NewLead)
+                .WithMany(c => c.SellRecords)
+                .HasForeignKey(e => e.NewLeadId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
@@ -408,6 +418,51 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasOne(e => e.UpdatedByAccount)
                 .WithMany()
                 .HasForeignKey(e => e.UpdatedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<NewLeadDao>(entity =>
+        {
+            entity.ToTable("new_lead");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDefaultValueSql("gen_random_uuid()");
+            
+            entity.Property(e => e.Name)
+                .HasColumnName("name")
+                .HasMaxLength(255)
+                .IsRequired();
+
+            entity.Property(e => e.LeadStatus)
+                .HasColumnName("lead_status")
+                .HasMaxLength(255);
+
+            entity.Property(e => e.InterestedProject)
+                .HasColumnName("interested_project")
+                .HasMaxLength(255);
+
+            entity.Property(e => e.CreatedBy)
+                .HasColumnName("created_by");
+
+            entity.Property(e => e.UpdatedBy)
+                .HasColumnName("updated_by");
+
+            entity.HasOne(e => e.CreatedByAccount)
+                .WithMany()
+                .HasForeignKey(e => e.CreatedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.UpdatedByAccount)
+                .WithMany()
+                .HasForeignKey(e => e.UpdatedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasMany(e => e.SellRecords)
+                .WithOne(e => e.NewLead)
+                .HasForeignKey(e => e.NewLeadId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
         

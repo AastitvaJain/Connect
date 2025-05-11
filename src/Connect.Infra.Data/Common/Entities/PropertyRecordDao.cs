@@ -26,4 +26,7 @@ public class PropertyRecordDao
     public int? BuyerId { get; set; }
     public int? BuyerSequence { get; set; }
     public ClientDao? Buyer { get; set; }
+    
+    public Guid? NewLeadId { get; set; }
+    public NewLeadDao? NewLead { get; set; }
 }
