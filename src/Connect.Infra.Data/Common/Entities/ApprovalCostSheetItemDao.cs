@@ -26,4 +26,33 @@ public class ApprovalCostSheetItemDao : BaseEntity
     public required int Sequence { get; set; }
 
     public ApprovalCostSheetDao? CostSheet { get; set; }
+
+    public static ApprovalCostSheetItemDao ToDao(ApprovalCostSheetItem item)
+    {
+        return new ApprovalCostSheetItemDao()
+        {
+            Particular = item.Particular,
+            PaymentPercentage = item.PaymentPercentage,
+            TotalPaymentWithoutTax = item.TotalPaymentWithoutTax,
+            FtAdjustment = item.FtAdjustment,
+            DiscountAdjustment = item.DiscountAdjustment,
+            NetPayableByCustomer = item.NetPayableByCustomer,
+            GstPayable = item.GstPayable,
+            Sequence = item.Sequence,
+        };
+    }
+
+    public static ApprovalCostSheetItem ToDomain(ApprovalCostSheetItemDao dao)
+    {
+        return new ApprovalCostSheetItem(
+            dao.Particular,
+            dao.PaymentPercentage,
+            dao.TotalPaymentWithoutTax,
+            dao.FtAdjustment,
+            dao.DiscountAdjustment,
+            dao.NetPayableByCustomer,
+            dao.GstPayable,
+            dao.Sequence
+        );
+    }
 }

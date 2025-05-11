@@ -7,6 +7,7 @@ using Connect.ClientTokens;
 using Connect.Configs;
 using Connect.Inventories;
 using Connect.Leads;
+using Connect.Requests;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -53,6 +54,7 @@ internal static class Module
         services.ConfigureInventoriesModule();
         services.ConfigureClientTokenModule();
         services.ConfigureLeadsModule();
+        services.ConfigureRequestsModule();
 
         services.ConfigureAdminModule();
     }
@@ -93,6 +95,7 @@ internal static class Module
         endpoints.MapInventoriesEndpoints();
         endpoints.MapClientTokenEndpoints();
         endpoints.MapLeadsEndpoints();
+        endpoints.MapRequestsEndpoints();
 
         endpoints.MapAdminEndpoints();
     }

@@ -15,8 +15,7 @@ public class ApproveRequestDao : BaseEntity
     [Required]
     public required RequestStatus Status { get; set; }
     
-    [Required]
-    public required List<ApprovalPropertyRecordDao> SellPropertyChanges { get; set; } = new();
+    public List<ApprovalPropertyRecordDao>? SellPropertyChanges { get; set; } = new();
     
     [Required]
     public required List<ApprovalPropertyRecordDao> BuyPropertyChanges { get; set; } = new();

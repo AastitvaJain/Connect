@@ -1,6 +1,6 @@
 namespace Connect.Requests.Create;
 
-public class Request
-{
-    
-}
+public sealed record Request(
+    List<ApprovalPropertyRecord>? SellPropertyChanges,
+    List<ApprovalPropertyRecord>? BuyPropertyChanges,
+    List<ApprovalCostSheet>? CostSheet);
