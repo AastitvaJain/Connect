@@ -483,7 +483,7 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.Property(e => e.Id)
                 .HasColumnName("Id")
                 .UseIdentityAlwaysColumn() // PostgresSQL
-                .HasIdentityOptions(startValue:100000, maxValue:999999);
+                .HasIdentityOptions(startValue:100000);
 
             entity.Property(e => e.ClientId)
                 .HasColumnName("client_id")
@@ -497,12 +497,30 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .HasColumnName("status")
                 .IsRequired();
 
+            entity.Property(e => e.IsApplied)
+                .HasColumnName("is_applied");
+
             entity.Property(e => e.CreatedBy)
                 .HasColumnName("created_by")
                 .IsRequired();
 
             entity.Property(e => e.UpdatedBy)
                 .HasColumnName("updated_by");
+            
+            entity.HasMany(e => e.SellPropertyChanges)
+                .WithOne(e => e.SellApproveRequest)
+                .HasForeignKey(e => e.SellApproveRequestId)
+                .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.HasMany(e => e.BuyPropertyChanges)
+                .WithOne(e => e.BuyApproveRequest)
+                .HasForeignKey(e => e.BuyApproveRequestId)
+                .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.HasMany(e => e.CostSheets)
+                .WithOne(e => e.ApproveRequest)
+                .HasForeignKey(e => e.ApproveRequestId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(e => e.CreatedByAccount)
                 .WithMany()
@@ -517,6 +535,119 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
             entity.HasOne(e => e.Client)
                 .WithMany(c => c.ApproveRequests)
                 .HasForeignKey(e => new { e.ClientId, e.ClientSequence })
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ApprovalPropertyRecordDao>(entity =>
+        {
+            entity.ToTable("approval_property_record");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("Id")
+                .UseIdentityAlwaysColumn() // PostgresSQL
+                .HasIdentityOptions(startValue: 100000);
+
+            entity.Property(e => e.PropertyRecordId)
+                .HasColumnName("property_record_id")
+                .IsRequired();
+
+            entity.Property(e => e.OriginalRate)
+                .HasColumnName("original_rate")
+                .IsRequired();
+
+            entity.Property(e => e.ProposedRate)
+                .HasColumnName("proposed_rate");
+
+            entity.Property(e => e.SellApproveRequestId)
+                .HasColumnName("sell_approve_request_id");
+            
+            entity.Property(e => e.BuyApproveRequestId)
+                .HasColumnName("buy_approve_request_id");
+            
+            entity.HasOne(e => e.SellApproveRequest)
+                .WithMany(e => e.SellPropertyChanges)
+                .HasForeignKey(e => e.SellApproveRequestId)
+                .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.HasOne(e => e.BuyApproveRequest)
+                .WithMany(e => e.BuyPropertyChanges)
+                .HasForeignKey(e => e.BuyApproveRequestId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ApprovalCostSheetDao>(entity =>
+        {
+            entity.ToTable("approval_cost_sheet");
+            
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("Id")
+                .UseIdentityAlwaysColumn() // PostgresSQL
+                .HasIdentityOptions(startValue: 100000);
+            
+            entity.Property(e => e.ApproveRequestId)
+                .HasColumnName("approve_request_id")
+                .IsRequired();
+
+            entity.Property(e => e.PropertyRecordId)
+                .HasColumnName("property_record_id")
+                .IsRequired();
+            
+            entity.HasMany(e => e.Items)
+                .WithOne(e => e.CostSheet)
+                .HasForeignKey(e => e.CostSheetId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+        });
+
+        modelBuilder.Entity<ApprovalCostSheetItemDao>(entity =>
+        {
+            entity.ToTable("approval_cost_sheet_item");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("Id")
+                .UseIdentityAlwaysColumn() // PostgresSQL
+                .HasIdentityOptions(startValue: 100000);
+
+            entity.Property(e => e.CostSheetId)
+                .HasColumnName("cost_sheet_id")
+                .IsRequired();
+
+            entity.Property(e => e.Particular)
+                .HasColumnName("particular")
+                .HasMaxLength(255)
+                .IsRequired();
+
+            entity.Property(e => e.PaymentPercentage)
+                .HasColumnName("payment_percentage");
+
+            entity.Property(e => e.TotalPaymentWithoutTax)
+                .HasColumnName("total_payment_without_tax");
+
+            entity.Property(e => e.FtAdjustment)
+                .HasColumnName("ft_adjustment");
+
+            entity.Property(e => e.DiscountAdjustment)
+                .HasColumnName("discount_adjustment");
+
+            entity.Property(e => e.NetPayableByCustomer)
+                .HasColumnName("net_payable_by_customer");
+
+            entity.Property(e => e.GstPayable)
+                .HasColumnName("gst_payable");
+
+            entity.Property(e => e.Sequence)
+                .HasColumnName("sequence")
+                .IsRequired();
+            
+            entity.HasOne(e => e.CostSheet)
+                .WithMany(e => e.Items)
+                .HasForeignKey(e => e.CostSheetId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
         
