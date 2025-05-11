@@ -10,7 +10,7 @@ export interface PropertyRecord {
   export interface ClientPayment {
     amountPaid: number;
     paymentMode?: string;
-    paymentId: number;
+    paymentId: string;
     channelPartnerId?: string;
     customChannelPartnerName?: string;
     customChannelPartnerNumber?: string;
