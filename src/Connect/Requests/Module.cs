@@ -1,5 +1,6 @@
 using Connect.Requests.Approve;
 using Connect.Requests.Create;
+using Connect.Requests.Get.ByStatus;
 using Connect.Requests.Reject;
 
 namespace Connect.Requests;
@@ -11,6 +12,8 @@ public static class Module
         endpoints.MapCreateRequests();
         endpoints.MapRejectRequests();
         endpoints.MapApproveRequests();
+        
+        endpoints.MapGetRequestsByStatus();
     }
 
     public static void ConfigureRequestsModule(this IServices services)
@@ -18,5 +21,7 @@ public static class Module
         services.ConfigureCreateRequests();
         services.ConfigureRejectRequests();
         services.ConfigureApproveRequests();
+        
+        services.ConfigureGetRequestsByStatus();
     }
 }

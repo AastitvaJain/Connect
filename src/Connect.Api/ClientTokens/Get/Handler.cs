@@ -5,7 +5,7 @@ public interface IHandler
     Task<IResult> Handle(ClientToken token, CancellationToken cancellationToken);
 }
 
-public class Handler(IStore store) : IHandler
+internal sealed class Handler(IStore store) : IHandler
 {
     public async Task<IResult> Handle(ClientToken token, CancellationToken cancellationToken)
     {

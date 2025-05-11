@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <Folder Include="Accounts\Common\" />
+      <Folder Include="Requests\Get\Values\" />
     </ItemGroup>
 
     <ItemGroup>

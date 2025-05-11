@@ -7,4 +7,5 @@ public sealed record ApproveRequest(
     List<ApprovalCostSheet> CostSheets,
     bool IsApplied,
     string? Note,
-    long? Id = null);
+    long? Id = null,
+    Client? Client = null);
