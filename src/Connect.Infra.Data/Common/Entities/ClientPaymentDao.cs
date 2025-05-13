@@ -14,6 +14,12 @@ public class ClientPaymentDao : BaseEntity
     [MaxLength(255)]
     public required string PaymentId { get; set; }
     
+    [Required]
+    public required float TotalBuyAmount { get; set; }
+    
+    [Required]
+    public required float TotalSellAmount { get; set; }
+    
     public required int ClientId { get; set; }
     public required int ClientSequence { get; set; } 
     public ClientDao? Client { get; set; }

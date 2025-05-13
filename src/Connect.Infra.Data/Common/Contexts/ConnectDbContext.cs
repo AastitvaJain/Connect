@@ -374,6 +374,14 @@ public class ConnectDbContext(DbContextOptions<ConnectDbContext> options) : DbCo
                 .HasColumnName("payment_id")
                 .HasMaxLength(255)
                 .IsRequired();
+            
+            entity.Property(e => e.TotalBuyAmount)
+                .HasColumnName("total_buy_amount")
+                .IsRequired();
+            
+            entity.Property(e => e.TotalSellAmount)
+                .HasColumnName("total_sell_amount")
+                .IsRequired();
 
             entity.Property(e => e.ClientId)
                 .HasColumnName("client_id")

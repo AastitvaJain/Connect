@@ -18,6 +18,13 @@ internal sealed class Store(ConnectDbContext context) : RequestStore(context) ,I
         if(dao is null)
             return false;
         
+        // Mark all other records as not applied
+        await _context.ApproveRequests
+            .Where(x => x.ClientId == dao.ClientId && x.ClientSequence == dao.ClientSequence && x.IsApplied)
+            .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(x => x.IsApplied, false),
+                cancellationToken);
+        
         _context.ApprovalPropertyRecords.RemoveRange(dao.SellPropertyChanges ?? []);
         _context.ApprovalPropertyRecords.RemoveRange(dao.BuyPropertyChanges);
         

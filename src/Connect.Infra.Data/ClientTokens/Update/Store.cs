@@ -28,6 +28,27 @@ internal sealed class Store(ConnectDbContext context) : ClientTokenStore(context
 
         if (client.Payment is not null)
         {
+            float totalSellAmount = 0;
+            float totalBuyAmount = 0;
+
+            foreach (PropertyRecord clientSellRecord in client.SellRecords ?? [])
+            {
+                var area = await _context.SoldInventory.Where(x => x.Id == clientSellRecord.Id)
+                    .Select(x => x.BuiltUpArea)
+                    .SingleOrDefaultAsync(cancellationToken);
+                
+                totalSellAmount += clientSellRecord.ApprovedRate ?? clientSellRecord.OriginalRate * area;
+            }
+
+            foreach (PropertyRecord clientBuyRecord in client.BuyRecords ?? [])
+            {
+                var area = await _context.NewInventory.Where(x => x.Id == clientBuyRecord.Id)
+                    .Select(x => x.BuiltUpArea)
+                    .SingleOrDefaultAsync(cancellationToken);
+                
+                totalBuyAmount += clientBuyRecord.ApprovedRate ?? clientBuyRecord.OriginalRate * area;
+            }
+            
             if (dao.ClientPayment is null)
             {
                 dao.ClientPayment = new ClientPaymentDao()
@@ -40,6 +61,8 @@ internal sealed class Store(ConnectDbContext context) : ClientTokenStore(context
                     ChannelPartnerId = client.Payment.ChannelPartnerId,
                     CustomChannelPartnerName = client.Payment.CustomChannelPartnerName,
                     CustomChannelPartnerNumber = client.Payment.CustomChannelPartnerNumber,
+                    TotalSellAmount = totalSellAmount,
+                    TotalBuyAmount = totalBuyAmount,
                 };
             }
             else
@@ -50,6 +73,8 @@ internal sealed class Store(ConnectDbContext context) : ClientTokenStore(context
                 dao.ClientPayment.ChannelPartnerId = client.Payment.ChannelPartnerId;
                 dao.ClientPayment.CustomChannelPartnerName = client.Payment.CustomChannelPartnerName;
                 dao.ClientPayment.CustomChannelPartnerNumber = client.Payment.CustomChannelPartnerNumber;
+                dao.ClientPayment.TotalSellAmount = totalSellAmount;
+                dao.ClientPayment.TotalBuyAmount = totalBuyAmount;
             }
         }
         
